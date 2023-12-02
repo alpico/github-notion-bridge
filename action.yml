@@ -1,5 +1,5 @@
 name: 'Github Notion Bridge'
-description: 'Mirrorsactivity from Github in Notion'
+description: 'Mirrors activity from Github in Notion'
 author: 'alpico'
 
 runs:
