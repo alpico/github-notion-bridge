@@ -38,9 +38,9 @@ export async function open(context: Context): Promise<void> {
 }
 
 async function updateRepoTags(notion: Client, context: Context): Promise<string> {
-    const options = await getRepoTags(notion, context);
+    const options = await getRepoTags(notion);
     const repoName = context.payload.repository?.name ?? "";
-    if (options.find((elem: any) => elem["name"] === repoName) == null) {
+    if (options.find((elem: any) => elem["name"] === repoName) === null) {
         options.push({ name: repoName })
         const response = await notion.databases.update({
             database_id: pageId,
@@ -57,8 +57,8 @@ async function updateRepoTags(notion: Client, context: Context): Promise<string>
     return repoName;
 }
 
-async function getRepoTags(notion: Client, context: Context): Promise<any> {
-    const response = await notion.databases.retrieve({ database_id: "638c01d026394e27ab2bfaddc1d013af" });
+async function getRepoTags(notion: Client): Promise<any> {
+    const response = await notion.databases.retrieve({ database_id: pageId });
     const repo = response.properties["Repository"] as any;
     return repo["select"]["options"];
 }
