@@ -1,5 +1,5 @@
 import * as core from '@actions/core';
-import contextObject from './sample_events/labeled.json';
+import contextObject from './sample_events/unlabeled.json';
 import { Context } from '@actions/github/lib/context';
 import * as issues from './issues';
 import { config } from "dotenv";

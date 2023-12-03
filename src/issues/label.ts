@@ -1,7 +1,7 @@
 import { Context } from "@actions/github/lib/context";
 import { Client } from "@notionhq/client"
 import { apiKey, pageId } from "../main";
-import { githubLinkFromIssue, notionPageIdsFromGithubLink } from ".";
+import { githubLinkFromIssue, notionPageIdsFromGithubLink, setPageLabels, getPageLabels } from ".";
 
 export async function label(context: Context): Promise<void> {
     const notion = new Client({ auth: apiKey });
@@ -44,21 +44,5 @@ async function getDBLabels(notion: Client): Promise<any> {
 async function updatePageLabels(notion: Client, pageId: string, labelName: string): Promise<void> {
     const labels = await getPageLabels(notion, pageId);
     labels.push({ name: labelName });
-    const response = await notion.pages.update({
-        page_id: pageId,
-        properties: {
-            "Github Labels": {
-                multi_select: labels,
-            }
-        }
-    })
-    console.log(response);
-}
-
-async function getPageLabels(notion: Client, pageId: string): Promise<any> {
-    const response = await notion.pages.properties.retrieve({
-        page_id: pageId,
-        property_id: "Github Labels"
-    }) as any;
-    return response["multi_select"];
+    await setPageLabels(notion, pageId, labels);
 }

@@ -38,3 +38,23 @@ export async function moveIssueOnBoard(notion: Client, pageId: string, newStatus
     });
     console.log(response);
 }
+
+export async function getPageLabels(notion: Client, pageId: string): Promise<any> {
+    const response = await notion.pages.properties.retrieve({
+        page_id: pageId,
+        property_id: "Github Labels"
+    }) as any;
+    return response["multi_select"];
+}
+
+export async function setPageLabels(notion: Client, pageId: string, labels: any): Promise<void> {
+    const response = await notion.pages.update({
+        page_id: pageId,
+        properties: {
+            "Github Labels": {
+                multi_select: labels,
+            }
+        }
+    })
+    console.log(response);
+}
