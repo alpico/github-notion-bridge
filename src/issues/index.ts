@@ -1,6 +1,12 @@
 export { open } from './open';
+export { edit } from './edit'
+export { deletePage } from './delete';
 export { close } from './close';
 export { reopen } from './reopen';
+export { assign } from './assign'
+export { unassign } from './unassign'
+export { label } from './label'
+export { unlabel } from './unlabel'
 import { Client } from "@notionhq/client";
 import { Context } from '@actions/github/lib/context';
 
