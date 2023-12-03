@@ -10,6 +10,11 @@ export { unlabel } from './unlabel'
 import { Client } from "@notionhq/client";
 import { Context } from '@actions/github/lib/context';
 
+export const notionUserFromGithubUsername: Record<string, string> = {
+    "aDogCalledSpot": "30486824-964a-49ae-a41b-a4640bcf8721",
+}
+
+
 // Ideally this would only return one result, but we might as well return
 // all of them to make sure we do everything correctly.
 export async function notionPageIdsFromGithubLink(notion: Client, databaseId: string, link: string): Promise<string[]> {
@@ -53,6 +58,29 @@ export async function setPageLabels(notion: Client, pageId: string, labels: any)
         properties: {
             "Github Labels": {
                 multi_select: labels,
+            }
+        }
+    })
+    console.log(response);
+}
+
+// For some reason we only ever get one assignee instead of an array
+export async function getAssignee(notion: Client, pageId: string): Promise<any> {
+    const response = await notion.pages.properties.retrieve({
+        page_id: pageId,
+        property_id: "Assignees"
+    }) as any;
+    console.log(response.results);
+
+    return response.results[0].people;
+}
+
+export async function setAssignees(notion: Client, pageId: string, assignees: any): Promise<void> {
+    const response = await notion.pages.update({
+        page_id: pageId,
+        properties: {
+            "Assignees": {
+                people: assignees,
             }
         }
     })
