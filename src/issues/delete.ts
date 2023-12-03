@@ -7,5 +7,11 @@ export async function deletePage(context: Context): Promise<void> {
     const notion = new Client({ auth: apiKey });
     const link = githubLinkFromIssue(context);
     const issuePageIds = await notionPageIdsFromGithubLink(notion, pageId, link);
-    // TODO
+    issuePageIds.forEach(async issuePageId => {
+        const response = await notion.pages.update({
+            page_id: issuePageId,
+            archived: true,
+        });
+        console.log(response);
+    })
 }
