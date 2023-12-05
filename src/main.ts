@@ -1,8 +1,11 @@
 import * as core from '@actions/core';
-import contextObject from './sample_events/assigned.json';
+import contextObject from './sample_events/comment_created.json';
+// import contextObject from './sample_events/opened.json';
 import { Context } from '@actions/github/lib/context';
 import * as issues from './issues';
+import * as issue_comment from './issue_comment';
 import { config } from "dotenv";
+import { Client } from '@notionhq/client';
 
 config();
 export const pageId = process.env.NOTION_PAGE_ID!;
@@ -98,5 +101,33 @@ async function handleIssuesEvent(context: Context): Promise<void> {
 }
 
 async function handleIssueCommentEvent(context: Context): Promise<void> {
-  throw new Error("Issue comment events are still a todo");
+  switch (context.payload.action as IssueCommentAction) {
+    case "created": {
+      await issue_comment.create(context);
+      break;
+    }
+    case "deleted": {
+      throw new Error("`deleted` events are not supported because the Notion API can't handle that")
+    }
+    case "edited": {
+      throw new Error("`edited` events are not supported because the Notion API can't handle that")
+    }
+  }
+}
+
+export function githubLinkFromIssue(context: Context): string {
+    return context.payload.issue?.html_url ?? "";
+}
+
+// Ideally this would only return one result, but we might as well return
+// all of them to make sure we do everything correctly.
+export async function notionPageIdsFromGithubLink(notion: Client, databaseId: string, link: string): Promise<string[]> {
+    const response = await notion.databases.query({
+        database_id: databaseId,
+        filter: {
+            property: "Github Link",
+            url: { equals: link },
+        }
+    })
+    return response.results.map(x => x.id);
 }

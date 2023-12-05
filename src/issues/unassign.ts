@@ -1,7 +1,7 @@
 import { Context } from "@actions/github/lib/context";
 import { Client } from "@notionhq/client"
-import { apiKey, pageId } from "../main";
-import { githubLinkFromIssue, notionPageIdsFromGithubLink, getAssignee, setAssignees, notionUserFromGithubUsername } from ".";
+import { apiKey, pageId, githubLinkFromIssue, notionPageIdsFromGithubLink } from "../main";
+import { getAssignee, setAssignees, notionUserFromGithubUsername } from ".";
 
 export async function unassign(context: Context): Promise<void> {
     const notion = new Client({ auth: apiKey });

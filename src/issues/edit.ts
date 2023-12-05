@@ -1,8 +1,7 @@
 import { Context } from "@actions/github/lib/context";
 import { Client } from "@notionhq/client"
 import { BlockObjectRequest } from "@notionhq/client/build/src/api-endpoints";
-import { apiKey, pageId } from "../main";
-import { githubLinkFromIssue, notionPageIdsFromGithubLink } from ".";
+import { apiKey, pageId, notionPageIdsFromGithubLink, githubLinkFromIssue } from "../main";
 import { markdownToBlocks } from "@tryfabric/martian";
 
 export async function edit(context: Context): Promise<void> {

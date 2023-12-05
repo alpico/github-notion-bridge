@@ -1,7 +1,6 @@
 import { Context } from "@actions/github/lib/context";
 import { Client } from "@notionhq/client"
-import { apiKey, pageId } from "../main";
-import { githubLinkFromIssue, notionPageIdsFromGithubLink } from ".";
+import { apiKey, pageId, githubLinkFromIssue, notionPageIdsFromGithubLink } from "../main";
 
 export async function deletePage(context: Context): Promise<void> {
     const notion = new Client({ auth: apiKey });

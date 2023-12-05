@@ -1,7 +1,7 @@
 import { Context } from "@actions/github/lib/context";
 import { Client } from "@notionhq/client"
-import { apiKey, pageId } from "../main";
-import { githubLinkFromIssue, notionPageIdsFromGithubLink, setPageLabels, getPageLabels } from ".";
+import { apiKey, pageId, githubLinkFromIssue, notionPageIdsFromGithubLink } from "../main";
+import { setPageLabels, getPageLabels } from ".";
 
 export async function label(context: Context): Promise<void> {
     const notion = new Client({ auth: apiKey });

@@ -2,8 +2,7 @@ import { Context } from "@actions/github/lib/context";
 import { Client } from "@notionhq/client"
 import { BlockObjectRequest } from "@notionhq/client/build/src/api-endpoints";
 import { markdownToBlocks } from "@tryfabric/martian";
-import { apiKey, pageId } from '../main'
-import { githubLinkFromIssue } from ".";
+import { apiKey, pageId, githubLinkFromIssue } from '../main'
 
 export async function open(context: Context): Promise<void> {
     const notion = new Client({ auth: apiKey });
