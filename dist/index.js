@@ -47115,10 +47115,7 @@ exports.config = void 0;
 const config_local_1 = __nccwpck_require__(4685);
 const config_action_1 = __nccwpck_require__(7388);
 const core = __importStar(__nccwpck_require__(2186));
-if (process.argv.find(x => x === "--local") !== null) {
-    core.info("Using local configuration");
-    core.info(JSON.stringify(process.argv));
-    core.info(`${process.argv.find(x => x === "--local")}`);
+if (process.argv.find(x => x === "--local") !== undefined) {
     exports.config = (0, config_local_1.config)();
 }
 else {
