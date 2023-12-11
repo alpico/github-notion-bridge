@@ -47351,7 +47351,7 @@ async function deletePage(context) {
             page_id: issuePageId,
             archived: true,
         });
-        console.log(response);
+        core.debug(JSON.stringify(response));
     });
 }
 exports.deletePage = deletePage;
@@ -47419,7 +47419,7 @@ async function updateTitle(notion, pageId, new_title) {
             }
         },
     });
-    console.log(response);
+    core.debug(JSON.stringify(response));
 }
 async function updateBody(notion, pageId, newBody) {
     await deleteChildBlocks(notion, pageId);
@@ -47427,7 +47427,7 @@ async function updateBody(notion, pageId, newBody) {
         block_id: pageId,
         children: (0, martian_1.markdownToBlocks)(newBody),
     });
-    console.log(response);
+    core.debug(JSON.stringify(response));
 }
 async function deleteChildBlocks(notion, pageId) {
     // Get child blocks
@@ -47502,13 +47502,13 @@ async function moveIssueOnBoard(notion, pageId, newStatus) {
             }
         }
     });
-    console.log(response);
+    core.debug(JSON.stringify(response));
 }
 exports.moveIssueOnBoard = moveIssueOnBoard;
 async function getPageLabels(notion, pageId) {
     const response = await notion.pages.properties.retrieve({
         page_id: pageId,
-        property_id: config_1.config.linkPropName
+        property_id: config_1.config.labelPropName
     });
     core.debug(JSON.stringify(response));
     return response["multi_select"];
@@ -47518,12 +47518,12 @@ async function setPageLabels(notion, pageId, labels) {
     const response = await notion.pages.update({
         page_id: pageId,
         properties: {
-            linkPropName: {
+            [config_1.config.labelPropName]: {
                 multi_select: labels,
             }
         }
     });
-    console.log(response);
+    core.debug(JSON.stringify(response));
 }
 exports.setPageLabels = setPageLabels;
 // For some reason we only ever get one assignee instead of an array
@@ -47532,7 +47532,7 @@ async function getAssignee(notion, pageId) {
         page_id: pageId,
         property_id: config_1.config.assigneePropName
     });
-    console.log(response.results);
+    core.debug(response.results);
     return response.results[0].people;
 }
 exports.getAssignee = getAssignee;
@@ -47540,12 +47540,12 @@ async function setAssignees(notion, pageId, assignees) {
     const response = await notion.pages.update({
         page_id: pageId,
         properties: {
-            assigneePropName: {
+            [config_1.config.assigneePropName]: {
                 people: assignees,
             }
         }
     });
-    console.log(response);
+    core.debug(JSON.stringify(response));
 }
 exports.setAssignees = setAssignees;
 
@@ -47616,7 +47616,7 @@ async function updateDBLabels(notion, context) {
                 }
             }
         });
-        console.log(response);
+        core.debug(JSON.stringify(response));
     }
     return labelName;
 }
@@ -47717,7 +47717,7 @@ async function updateRepoTags(notion, context) {
                 }
             }
         });
-        console.log(response);
+        core.debug(JSON.stringify(response));
     }
     return repoName;
 }

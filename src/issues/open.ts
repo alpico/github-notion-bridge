@@ -55,7 +55,7 @@ async function updateRepoTags(notion: Client, context: Context): Promise<string>
                 }
             }
         });
-        console.log(response);
+        core.debug(JSON.stringify(response));
     }
     return repoName;
 }

@@ -32,7 +32,7 @@ async function updateTitle(notion: Client, pageId: string, new_title: string): P
             }
         },
     })
-    console.log(response);
+    core.debug(JSON.stringify(response));
 }
 
 async function updateBody(notion: Client, pageId: string, newBody: string): Promise<void> {
@@ -41,7 +41,7 @@ async function updateBody(notion: Client, pageId: string, newBody: string): Prom
         block_id: pageId,
         children: markdownToBlocks(newBody) as Array<BlockObjectRequest>,
     })
-    console.log(response);
+    core.debug(JSON.stringify(response));
 }
 
 async function deleteChildBlocks(notion: Client, pageId: string): Promise<void> {
