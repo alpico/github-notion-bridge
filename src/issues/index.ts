@@ -9,6 +9,7 @@ export { label } from './label'
 export { unlabel } from './unlabel'
 import { config } from '../config';
 import { Client } from "@notionhq/client";
+import * as core from "@actions/core";
 
 export async function moveIssueOnBoard(notion: Client, pageId: string, newStatus: string): Promise<void> {
     const response = await notion.pages.update({
@@ -27,6 +28,7 @@ export async function getPageLabels(notion: Client, pageId: string): Promise<any
         page_id: pageId,
         property_id: config.linkPropName
     }) as any;
+    core.info(JSON.stringify(response));
     return response["multi_select"];
 }
 

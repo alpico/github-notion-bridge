@@ -47444,10 +47444,33 @@ async function deleteChildBlocks(notion, pageId) {
 /***/ }),
 
 /***/ 6010:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
 
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.setAssignees = exports.getAssignee = exports.setPageLabels = exports.getPageLabels = exports.moveIssueOnBoard = exports.unlabel = exports.label = exports.unassign = exports.assign = exports.reopen = exports.close = exports.deletePage = exports.edit = exports.open = void 0;
 var open_1 = __nccwpck_require__(8940);
@@ -47469,6 +47492,7 @@ Object.defineProperty(exports, "label", ({ enumerable: true, get: function () { 
 var unlabel_1 = __nccwpck_require__(2294);
 Object.defineProperty(exports, "unlabel", ({ enumerable: true, get: function () { return unlabel_1.unlabel; } }));
 const config_1 = __nccwpck_require__(2284);
+const core = __importStar(__nccwpck_require__(2186));
 async function moveIssueOnBoard(notion, pageId, newStatus) {
     const response = await notion.pages.update({
         page_id: pageId,
@@ -47486,6 +47510,7 @@ async function getPageLabels(notion, pageId) {
         page_id: pageId,
         property_id: config_1.config.linkPropName
     });
+    core.info(JSON.stringify(response));
     return response["multi_select"];
 }
 exports.getPageLabels = getPageLabels;
