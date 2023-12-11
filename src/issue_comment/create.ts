@@ -1,14 +1,15 @@
 import { Context } from "@actions/github/lib/context";
 import { Client } from "@notionhq/client"
-import { apiKey, pageId, notionPageIdsFromGithubLink, githubLinkFromIssue } from "../main";
+import { notionPageIdsFromGithubLink, githubLinkFromIssue } from "../main";
+import { config } from "../config";
 import { markdownToRichText } from "@tryfabric/martian";
 import * as core from "@actions/core";
 
 export async function create(context: Context): Promise<void> {
-    const notion = new Client({ auth: apiKey });
+    const notion = new Client({ auth: config.apiKey });
     const link = githubLinkFromIssue(context);
     core.info(`Received create comment event for issue ${link}...`);
-    const issuePageIds = await notionPageIdsFromGithubLink(notion, pageId, link);
+    const issuePageIds = await notionPageIdsFromGithubLink(notion, config.pageId, link);
     const login = context.payload.comment?.user.login ?? "";
     const author_url = context.payload.comment?.user.html_url ?? "";
     const url = context.payload.comment?.html_url ?? "";

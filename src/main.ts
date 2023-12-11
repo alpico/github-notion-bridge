@@ -1,15 +1,13 @@
 import * as core from '@actions/core'
-import contextObject from './sample_events/comment_created.json'
 import { Context } from '@actions/github/lib/context'
 import * as issues from './issues'
 import * as issue_comment from './issue_comment'
 import { config } from 'dotenv'
 import { Client } from '@notionhq/client'
 import * as github from '@actions/github'
+import fs from 'fs'
 
 config()
-export const pageId = process.env.NOTION_PAGE_ID!
-export const apiKey = process.env.NOTION_API_KEY!
 
 type IssuesAction =
   | 'opened'
@@ -38,8 +36,10 @@ type IssueCommentAction = 'created' | 'edited' | 'deleted'
 export async function run(): Promise<void> {
   try {
     let context: Context
-    if (process.argv.find(x => x === '--local') !== null) {
-      context = Object.assign(new Context(), contextObject)
+    if (process.argv[2] === '--local') {
+      context = JSON.parse(
+        fs.readFileSync(`src/sample_events/${process.argv[3]}.json`, 'utf-8')
+      )
     } else {
       context = github.context
     }
@@ -49,7 +49,7 @@ export async function run(): Promise<void> {
       await handleIssueCommentEvent(context)
     } else {
       throw new Error(
-        "Support for '${context.eventName}' events is not planned to be implemented."
+        `Support for '${context.eventName}' events is not planned to be implemented.`
       )
     }
   } catch (error) {

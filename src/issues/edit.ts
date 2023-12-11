@@ -1,15 +1,16 @@
 import { Context } from "@actions/github/lib/context";
 import { Client } from "@notionhq/client"
 import { BlockObjectRequest } from "@notionhq/client/build/src/api-endpoints";
-import { apiKey, pageId, notionPageIdsFromGithubLink, githubLinkFromIssue } from "../main";
+import { notionPageIdsFromGithubLink, githubLinkFromIssue } from "../main";
+import { config } from "../config";
 import { markdownToBlocks } from "@tryfabric/martian";
 import * as core from "@actions/core";
 
 export async function edit(context: Context): Promise<void> {
-    const notion = new Client({ auth: apiKey });
+    const notion = new Client({ auth: config.apiKey });
     const link = githubLinkFromIssue(context);
     core.info(`Received edit event for issue ${link}...`);
-    const issuePageIds = await notionPageIdsFromGithubLink(notion, pageId, link);
+    const issuePageIds = await notionPageIdsFromGithubLink(notion, config.pageId, link);
 
     issuePageIds.forEach(async issuePageId => {
         core.debug(`Updating notion page {issuePageId}...`);

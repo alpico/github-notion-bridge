@@ -2,19 +2,19 @@ import { Context } from "@actions/github/lib/context";
 import { Client } from "@notionhq/client"
 import { BlockObjectRequest } from "@notionhq/client/build/src/api-endpoints";
 import { markdownToBlocks } from "@tryfabric/martian";
-import { apiKey, pageId, githubLinkFromIssue } from '../main'
-import { config } from "src/config";
+import { githubLinkFromIssue } from '../main'
+import { config } from "../config";
 import * as core from "@actions/core";
 
 export async function open(context: Context): Promise<void> {
     const link = githubLinkFromIssue(context);
     core.info(`Creating a new issue for ${link}...`);
-    const notion = new Client({ auth: apiKey });
+    const notion = new Client({ auth: config.apiKey });
     const issue = context.payload.issue;
     const repoName = await updateRepoTags(notion, context);
     const newPage = await notion.pages.create({
         parent: {
-            database_id: pageId,
+            database_id: config.pageId,
         },
         "icon": {
             external: {
@@ -37,7 +37,7 @@ export async function open(context: Context): Promise<void> {
         },
         children: markdownToBlocks(issue?.body ?? "") as Array<BlockObjectRequest>,
     });
-    console.info(`Page created: ${newPage.id}`);
+    core.info(`Page created: ${newPage.id}`);
 }
 
 async function updateRepoTags(notion: Client, context: Context): Promise<string> {
@@ -46,7 +46,7 @@ async function updateRepoTags(notion: Client, context: Context): Promise<string>
     if (options.find((elem: any) => elem["name"] === repoName) === null) {
         options.push({ name: repoName })
         const response = await notion.databases.update({
-            database_id: pageId,
+            database_id: config.pageId,
             properties: {
                 [config.repoPropName]: {
                     select: {
@@ -61,7 +61,7 @@ async function updateRepoTags(notion: Client, context: Context): Promise<string>
 }
 
 async function getRepoTags(notion: Client): Promise<any> {
-    const response = await notion.databases.retrieve({ database_id: pageId });
+    const response = await notion.databases.retrieve({ database_id: config.pageId });
     const repo = response.properties[config.repoPropName] as any;
     return repo["select"]["options"];
 }

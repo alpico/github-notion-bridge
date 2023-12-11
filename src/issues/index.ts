@@ -7,7 +7,7 @@ export { assign } from './assign'
 export { unassign } from './unassign'
 export { label } from './label'
 export { unlabel } from './unlabel'
-import { config } from 'src/config';
+import { config } from '../config';
 import { Client } from "@notionhq/client";
 
 export async function moveIssueOnBoard(notion: Client, pageId: string, newStatus: string): Promise<void> {
