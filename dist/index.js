@@ -47122,6 +47122,7 @@ else {
     core.info("Using action configuration...");
     exports.config = (0, config_action_1.config)();
 }
+core.info(JSON.stringify(exports.config));
 
 
 /***/ }),

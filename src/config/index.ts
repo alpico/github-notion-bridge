@@ -25,3 +25,5 @@ if (process.argv.find(x => x === "--local") !== undefined) {
     core.info("Using action configuration...");
     config = config_action();
 }
+
+core.info(JSON.stringify(config));
