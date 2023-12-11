@@ -47510,7 +47510,7 @@ async function getPageLabels(notion, pageId) {
         page_id: pageId,
         property_id: config_1.config.linkPropName
     });
-    core.info(JSON.stringify(response));
+    core.debug(JSON.stringify(response));
     return response["multi_select"];
 }
 exports.getPageLabels = getPageLabels;
