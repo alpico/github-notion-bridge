@@ -21,7 +21,7 @@ if (!apiKeyTmp) {
 export const apiKey = apiKeyTmp!;
 export const labelPropName = process.env.GH_LABEL_PROP_NAME ?? "Github Labels";
 export const linkPropName = process.env.GH_LINK_PROP_NAME ?? "Github Link";
-export const repoPropName = process.env.GH_LABEL_PROP_NAME ?? "Repository";
+export const repoPropName = process.env.GH_REPO_PROP_NAME ?? "Repository";
 export const assigneePropName = process.env.ASSIGNEE_PROP_NAME ?? "Assignees";
 export const boardColumnPropName = process.env.BOARD_COLUMN_PROP_NAME ?? "Status";
 export const boardColumnDefaultVal = process.env.BOARD_COLUMN_DEFAULT_VAL ?? "Backlog";
