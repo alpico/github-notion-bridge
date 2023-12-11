@@ -1,5 +1,6 @@
 import { config as config_local } from "./config_local";
 import { config as config_action } from "./config_action"
+import * as core from "@actions/core";
 
 export type Config = {
     ghToken: string,
@@ -19,7 +20,9 @@ export type Config = {
 
 export let config: Config;
 if (process.argv.find(x => x === "--local") !== null) {
+    core.info("Using local configuration");
     config = config_local();
 } else {
+    core.info("Using action configuration...");
     config = config_action();
 }
