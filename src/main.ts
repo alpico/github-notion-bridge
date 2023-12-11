@@ -2,12 +2,9 @@ import * as core from '@actions/core'
 import { Context } from '@actions/github/lib/context'
 import * as issues from './issues'
 import * as issue_comment from './issue_comment'
-import { config } from 'dotenv'
 import { Client } from '@notionhq/client'
 import * as github from '@actions/github'
 import fs from 'fs'
-
-config()
 
 type IssuesAction =
   | 'opened'

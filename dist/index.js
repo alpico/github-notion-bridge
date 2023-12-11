@@ -47872,10 +47872,8 @@ exports.notionPageIdsFromGithubLink = exports.githubLinkFromIssue = exports.run 
 const core = __importStar(__nccwpck_require__(2186));
 const issues = __importStar(__nccwpck_require__(6010));
 const issue_comment = __importStar(__nccwpck_require__(3683));
-const dotenv_1 = __nccwpck_require__(2437);
 const github = __importStar(__nccwpck_require__(5438));
 const fs_1 = __importDefault(__nccwpck_require__(7147));
-(0, dotenv_1.config)();
 /**
  * The main function for the action.
  * @returns {Promise<void>} Resolves when the action is complete.
