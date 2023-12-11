@@ -47472,7 +47472,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.setAssignees = exports.getAssignee = exports.setPageLabels = exports.getPageLabels = exports.moveIssueOnBoard = exports.unlabel = exports.label = exports.unassign = exports.assign = exports.reopen = exports.close = exports.deletePage = exports.edit = exports.open = void 0;
+exports.setAssignees = exports.getAssignee = exports.setPageLabels = exports.getPageLabels = exports.getDBLabels = exports.updateDBLabels = exports.moveIssueOnBoard = exports.unlabel = exports.label = exports.unassign = exports.assign = exports.reopen = exports.close = exports.deletePage = exports.edit = exports.open = void 0;
 var open_1 = __nccwpck_require__(8940);
 Object.defineProperty(exports, "open", ({ enumerable: true, get: function () { return open_1.open; } }));
 var edit_1 = __nccwpck_require__(2745);
@@ -47505,6 +47505,35 @@ async function moveIssueOnBoard(notion, pageId, newStatus) {
     core.debug(JSON.stringify(response));
 }
 exports.moveIssueOnBoard = moveIssueOnBoard;
+async function updateDBLabels(notion, context) {
+    const options = await getDBLabels(notion);
+    const labelNames = context.payload.labels.map((label) => label.name);
+    labelNames.forEach((labelName) => {
+        if (options.find((elem) => elem["name"] === labelName) === null) {
+            options.push({
+                name: labelName,
+            });
+        }
+    });
+    const response = await notion.databases.update({
+        database_id: config_1.config.pageId,
+        properties: {
+            labelPropName: {
+                multi_select: {
+                    options: options
+                }
+            }
+        }
+    });
+    core.debug(JSON.stringify(response));
+    return labelNames;
+}
+exports.updateDBLabels = updateDBLabels;
+async function getDBLabels(notion) {
+    const response = await notion.databases.retrieve({ database_id: config_1.config.pageId });
+    return response.properties[config_1.config.labelPropName]["multi_select"]["options"];
+}
+exports.getDBLabels = getDBLabels;
 async function getPageLabels(notion, pageId) {
     const response = await notion.pages.properties.retrieve({
         page_id: pageId,
@@ -47590,43 +47619,18 @@ const core = __importStar(__nccwpck_require__(2186));
 async function label(context) {
     const notion = new client_1.Client({ auth: config_1.config.apiKey });
     const link = (0, main_1.githubLinkFromIssue)(context);
-    const labelName = await updateDBLabels(notion, context);
-    core.info(`Received label event for label ${labelName} for issue ${link}...`);
+    const labelNames = await (0, _1.updateDBLabels)(notion, context);
+    core.info(`Received label event for label ${labelNames} for issue ${link}...`);
     const issuePageIds = await (0, main_1.notionPageIdsFromGithubLink)(notion, config_1.config.pageId, link);
     issuePageIds.forEach(async (issuePageId) => {
         core.debug(`Updating notion page ${issuePageId}...`);
-        await updatePageLabels(notion, issuePageId, labelName);
+        await updatePageLabels(notion, issuePageId, labelNames);
     });
 }
 exports.label = label;
-async function updateDBLabels(notion, context) {
-    const options = await getDBLabels(notion);
-    const labelName = context.payload.label.name;
-    if (options.find((elem) => elem["name"] === labelName) === null) {
-        options.push({
-            name: labelName,
-        });
-        const response = await notion.databases.update({
-            database_id: config_1.config.pageId,
-            properties: {
-                labelPropName: {
-                    multi_select: {
-                        options: options
-                    }
-                }
-            }
-        });
-        core.debug(JSON.stringify(response));
-    }
-    return labelName;
-}
-async function getDBLabels(notion) {
-    const response = await notion.databases.retrieve({ database_id: config_1.config.pageId });
-    return response.properties[config_1.config.labelPropName]["multi_select"]["options"];
-}
-async function updatePageLabels(notion, pageId, labelName) {
+async function updatePageLabels(notion, pageId, labelNames) {
     const labels = await (0, _1.getPageLabels)(notion, pageId);
-    labels.push({ name: labelName });
+    labels.concat(labelNames.map(name => { return { name }; }));
     await (0, _1.setPageLabels)(notion, pageId, labels);
 }
 
@@ -47668,12 +47672,15 @@ const martian_1 = __nccwpck_require__(6615);
 const main_1 = __nccwpck_require__(399);
 const config_1 = __nccwpck_require__(2284);
 const core = __importStar(__nccwpck_require__(2186));
+const _1 = __nccwpck_require__(6010);
 async function open(context) {
     const link = (0, main_1.githubLinkFromIssue)(context);
     core.info(`Creating a new issue for ${link}...`);
     const notion = new client_1.Client({ auth: config_1.config.apiKey });
     const issue = context.payload.issue;
     const repoName = await updateRepoTags(notion, context);
+    // get the labels
+    const labels = await (0, _1.updateDBLabels)(notion, context);
     const newPage = await notion.pages.create({
         parent: {
             database_id: config_1.config.pageId,
@@ -47695,6 +47702,14 @@ async function open(context) {
             },
             [config_1.config.repoPropName]: {
                 select: { name: repoName }
+            },
+            [config_1.config.assigneePropName]: {
+                people: issue?.assignees.map((user) => {
+                    return { id: config_1.config.ghNotionUserMap[user.login] };
+                })
+            },
+            [config_1.config.labelPropName]: {
+                multi_select: labels.map(name => { return { name }; })
             }
         },
         children: (0, martian_1.markdownToBlocks)(issue?.body ?? ""),
