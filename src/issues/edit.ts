@@ -13,7 +13,7 @@ export async function edit(context: Context): Promise<void> {
     const issuePageIds = await notionPageIdsFromGithubLink(notion, config.pageId, link);
 
     issuePageIds.forEach(async issuePageId => {
-        core.debug(`Updating notion page {issuePageId}...`);
+        core.debug(`Updating notion page ${issuePageId}...`);
         if (context.payload.changes.title?.from) {
             await updateTitle(notion, issuePageId, context.payload.issue?.["title"] ?? "");
         }

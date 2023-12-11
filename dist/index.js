@@ -47173,7 +47173,7 @@ async function create(context) {
     const header = `[@${login}](${author_url}) [commented](${url}): `;
     const body = context.payload.comment?.body ?? "";
     issuePageIds.forEach(async (issuePageId) => {
-        core.debug(`Updating notion page {issuePageId}...`);
+        core.debug(`Updating notion page ${issuePageId}...`);
         await notion.comments.create({
             parent: { page_id: issuePageId },
             rich_text: (0, martian_1.markdownToRichText)(header + body)
@@ -47240,7 +47240,7 @@ async function assign(context) {
     const issuePageIds = await (0, main_1.notionPageIdsFromGithubLink)(notion, config_1.config.pageId, link);
     const notionUser = config_1.config.ghNotionUserMap[context.payload.assignee.login];
     issuePageIds.forEach(async (issuePageId) => {
-        core.debug(`Updating notion page {issuePageId}...`);
+        core.debug(`Updating notion page ${issuePageId}...`);
         await updateAssignee(notion, issuePageId, notionUser);
     });
 }
@@ -47297,7 +47297,7 @@ async function close(context) {
     core.info(`Received close event for issue ${link}...`);
     const issuePageIds = await (0, main_1.notionPageIdsFromGithubLink)(notion, config_1.config.pageId, link);
     issuePageIds.forEach(async (issuePageId) => {
-        core.debug(`Updating notion page {issuePageId}...`);
+        core.debug(`Updating notion page ${issuePageId}...`);
         await (0, _1.moveIssueOnBoard)(notion, issuePageId, config_1.config.boardColumnDoneVal);
     });
 }
@@ -47346,7 +47346,7 @@ async function deletePage(context) {
     core.info(`Received delete event for issue ${link}...`);
     const issuePageIds = await (0, main_1.notionPageIdsFromGithubLink)(notion, config_1.config.pageId, link);
     issuePageIds.forEach(async (issuePageId) => {
-        core.debug(`Updating notion page {issuePageId}...`);
+        core.debug(`Updating notion page ${issuePageId}...`);
         const response = await notion.pages.update({
             page_id: issuePageId,
             archived: true,
@@ -47400,7 +47400,7 @@ async function edit(context) {
     core.info(`Received edit event for issue ${link}...`);
     const issuePageIds = await (0, main_1.notionPageIdsFromGithubLink)(notion, config_1.config.pageId, link);
     issuePageIds.forEach(async (issuePageId) => {
-        core.debug(`Updating notion page {issuePageId}...`);
+        core.debug(`Updating notion page ${issuePageId}...`);
         if (context.payload.changes.title?.from) {
             await updateTitle(notion, issuePageId, context.payload.issue?.["title"] ?? "");
         }
@@ -47533,7 +47533,7 @@ async function getAssignee(notion, pageId) {
         property_id: config_1.config.assigneePropName
     });
     core.debug(response.results);
-    return response.results[0].people;
+    return response.results[0]?.people ?? [];
 }
 exports.getAssignee = getAssignee;
 async function setAssignees(notion, pageId, assignees) {
@@ -47594,7 +47594,7 @@ async function label(context) {
     core.info(`Received label event for label ${labelName} for issue ${link}...`);
     const issuePageIds = await (0, main_1.notionPageIdsFromGithubLink)(notion, config_1.config.pageId, link);
     issuePageIds.forEach(async (issuePageId) => {
-        core.debug(`Updating notion page {issuePageId}...`);
+        core.debug(`Updating notion page ${issuePageId}...`);
         await updatePageLabels(notion, issuePageId, labelName);
     });
 }
@@ -47771,7 +47771,7 @@ async function reopen(context) {
     core.info(`Reopening issue ${link}...`);
     const issuePageIds = await (0, main_1.notionPageIdsFromGithubLink)(notion, config_1.config.pageId, link);
     issuePageIds.forEach(async (issuePageId) => {
-        core.debug(`Updating notion page {issuePageId}...`);
+        core.debug(`Updating notion page ${issuePageId}...`);
         await (0, _1.moveIssueOnBoard)(notion, issuePageId, config_1.config.boardColumnReopenedVal);
     });
 }
@@ -47877,7 +47877,7 @@ async function unlabel(context) {
     core.info(`Received an unlabel event for issue ${link} and label ${labelName}...`);
     const issuePageIds = await (0, main_1.notionPageIdsFromGithubLink)(notion, config_1.config.pageId, link);
     issuePageIds.forEach(async (issuePageId) => {
-        core.debug(`Updating notion page {issuePageId}...`);
+        core.debug(`Updating notion page ${issuePageId}...`);
         const labels = await (0, _1.getPageLabels)(notion, issuePageId).then(labels => labels.filter((elem) => elem["name"] !== labelName));
         await (0, _1.setPageLabels)(notion, issuePageId, labels);
     });

@@ -13,7 +13,7 @@ export async function label(context: Context): Promise<void> {
 
     const issuePageIds = await notionPageIdsFromGithubLink(notion, config.pageId, link);
     issuePageIds.forEach(async issuePageId => {
-        core.debug(`Updating notion page {issuePageId}...`);
+        core.debug(`Updating notion page ${issuePageId}...`);
         await updatePageLabels(notion, issuePageId, labelName);
     })
 }

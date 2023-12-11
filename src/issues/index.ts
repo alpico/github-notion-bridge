@@ -52,7 +52,7 @@ export async function getAssignee(notion: Client, pageId: string): Promise<any> 
     }) as any;
     core.debug(response.results);
 
-    return response.results[0].people;
+    return response.results[0]?.people ?? [];
 }
 
 export async function setAssignees(notion: Client, pageId: string, assignees: any): Promise<void> {

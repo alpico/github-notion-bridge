@@ -12,7 +12,7 @@ export async function assign(context: Context): Promise<void> {
     const issuePageIds = await notionPageIdsFromGithubLink(notion, config.pageId, link);
     const notionUser = config.ghNotionUserMap[context.payload.assignee.login];
     issuePageIds.forEach(async issuePageId => {
-        core.debug(`Updating notion page {issuePageId}...`);
+        core.debug(`Updating notion page ${issuePageId}...`);
         await updateAssignee(notion, issuePageId, notionUser);
     });
 }

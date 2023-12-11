@@ -11,7 +11,7 @@ export async function reopen(context: Context): Promise<void> {
     core.info(`Reopening issue ${link}...`);
     const issuePageIds = await notionPageIdsFromGithubLink(notion, config.pageId, link);
     issuePageIds.forEach(async issuePageId => {
-        core.debug(`Updating notion page {issuePageId}...`);
+        core.debug(`Updating notion page ${issuePageId}...`);
         await moveIssueOnBoard(notion, issuePageId, config.boardColumnReopenedVal);
     })
 }
