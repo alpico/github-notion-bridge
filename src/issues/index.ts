@@ -28,7 +28,7 @@ export async function getPageLabels(notion: Client, pageId: string): Promise<any
         page_id: pageId,
         property_id: config.linkPropName
     }) as any;
-    core.info(JSON.stringify(response));
+    core.debug(JSON.stringify(response));
     return response["multi_select"];
 }
 
