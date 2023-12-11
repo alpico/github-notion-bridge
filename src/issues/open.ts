@@ -3,8 +3,12 @@ import { Client } from "@notionhq/client"
 import { BlockObjectRequest } from "@notionhq/client/build/src/api-endpoints";
 import { markdownToBlocks } from "@tryfabric/martian";
 import { apiKey, pageId, githubLinkFromIssue } from '../main'
+import { boardColumnPropName, issueIcon, linkPropName, repoPropName } from "src/config";
+import * as core from "@actions/core";
 
 export async function open(context: Context): Promise<void> {
+    const link = githubLinkFromIssue(context);
+    core.info(`Creating a new issue for ${link}...`);
     const notion = new Client({ auth: apiKey });
     const issue = context.payload.issue;
     const repoName = await updateRepoTags(notion, context);
@@ -14,26 +18,26 @@ export async function open(context: Context): Promise<void> {
         },
         "icon": {
             external: {
-                url: "https://www.notion.so/images/external_integrations/github-icon.png",
+                url: issueIcon,
             }
         },
         properties: {
             "title": {
                 title: [{ text: { content: issue?.["title"] ?? "" } }]
             },
-            "Github Link": {
+            [linkPropName]: {
                 url: githubLinkFromIssue(context)
             },
-            "Tags": {
+            [boardColumnPropName]: {
                 status: { name: "Backlog" },
             },
-            "Repository": {
+            [repoPropName]: {
                 select: { name: repoName }
             }
         },
         children: markdownToBlocks(issue?.body ?? "") as Array<BlockObjectRequest>,
     });
-    console.log(newPage);
+    console.info(`Page created: ${newPage.id}`);
 }
 
 async function updateRepoTags(notion: Client, context: Context): Promise<string> {
@@ -44,7 +48,7 @@ async function updateRepoTags(notion: Client, context: Context): Promise<string>
         const response = await notion.databases.update({
             database_id: pageId,
             properties: {
-                "Repository": {
+                [repoPropName]: {
                     select: {
                         options: options
                     }
@@ -58,6 +62,6 @@ async function updateRepoTags(notion: Client, context: Context): Promise<string>
 
 async function getRepoTags(notion: Client): Promise<any> {
     const response = await notion.databases.retrieve({ database_id: pageId });
-    const repo = response.properties["Repository"] as any;
+    const repo = response.properties[repoPropName] as any;
     return repo["select"]["options"];
 }

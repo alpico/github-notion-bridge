@@ -3,13 +3,16 @@ import { Client } from "@notionhq/client"
 import { BlockObjectRequest } from "@notionhq/client/build/src/api-endpoints";
 import { apiKey, pageId, notionPageIdsFromGithubLink, githubLinkFromIssue } from "../main";
 import { markdownToBlocks } from "@tryfabric/martian";
+import * as core from "@actions/core";
 
 export async function edit(context: Context): Promise<void> {
     const notion = new Client({ auth: apiKey });
     const link = githubLinkFromIssue(context);
+    core.info(`Received edit event for issue ${link}...`);
     const issuePageIds = await notionPageIdsFromGithubLink(notion, pageId, link);
 
     issuePageIds.forEach(async issuePageId => {
+        core.debug(`Updating notion page {issuePageId}...`);
         if (context.payload.changes.title?.from) {
             await updateTitle(notion, issuePageId, context.payload.issue?.["title"] ?? "");
         }

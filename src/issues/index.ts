@@ -8,19 +8,13 @@ export { unassign } from './unassign'
 export { label } from './label'
 export { unlabel } from './unlabel'
 import { Client } from "@notionhq/client";
-
-export const notionUserFromGithubUsername: Record<string, string> = {
-    "aDogCalledSpot": "30486824-964a-49ae-a41b-a4640bcf8721",
-    "s1lken": "341ec851-6b7d-4c51-a3fd-5749dde48c4a",
-    "vmmon": "2be252ea-83d1-418e-b4fb-ce130654bf63",
-    "tpotie": "1f8bdbea-1aca-48f8-9801-7937c1ab7e4c",
-}
+import { assigneePropName, boardColumnPropName, linkPropName } from 'src/config';
 
 export async function moveIssueOnBoard(notion: Client, pageId: string, newStatus: string): Promise<void> {
     const response = await notion.pages.update({
         page_id: pageId,
         properties: {
-            "Tags": {
+            [boardColumnPropName]: {
                 status: { name: newStatus }
             }
         }
@@ -31,7 +25,7 @@ export async function moveIssueOnBoard(notion: Client, pageId: string, newStatus
 export async function getPageLabels(notion: Client, pageId: string): Promise<any> {
     const response = await notion.pages.properties.retrieve({
         page_id: pageId,
-        property_id: "Github Labels"
+        property_id: linkPropName
     }) as any;
     return response["multi_select"];
 }
@@ -40,7 +34,7 @@ export async function setPageLabels(notion: Client, pageId: string, labels: any)
     const response = await notion.pages.update({
         page_id: pageId,
         properties: {
-            "Github Labels": {
+            linkPropName: {
                 multi_select: labels,
             }
         }
@@ -52,7 +46,7 @@ export async function setPageLabels(notion: Client, pageId: string, labels: any)
 export async function getAssignee(notion: Client, pageId: string): Promise<any> {
     const response = await notion.pages.properties.retrieve({
         page_id: pageId,
-        property_id: "Assignees"
+        property_id: assigneePropName
     }) as any;
     console.log(response.results);
 
@@ -63,7 +57,7 @@ export async function setAssignees(notion: Client, pageId: string, assignees: an
     const response = await notion.pages.update({
         page_id: pageId,
         properties: {
-            "Assignees": {
+            assigneePropName: {
                 people: assignees,
             }
         }
