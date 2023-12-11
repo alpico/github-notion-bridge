@@ -47507,7 +47507,7 @@ async function moveIssueOnBoard(notion, pageId, newStatus) {
 exports.moveIssueOnBoard = moveIssueOnBoard;
 async function updateDBLabels(notion, context) {
     const options = await getDBLabels(notion);
-    const labelNames = context.payload.labels.map((label) => label.name);
+    const labelNames = context.payload.issue?.labels.map((label) => label.name);
     labelNames.forEach((labelName) => {
         if (options.find((elem) => elem["name"] === labelName) === null) {
             options.push({
@@ -47681,6 +47681,7 @@ async function open(context) {
     const repoName = await updateRepoTags(notion, context);
     // get the labels
     const labels = await (0, _1.updateDBLabels)(notion, context);
+    core.info(JSON.stringify(labels));
     const newPage = await notion.pages.create({
         parent: {
             database_id: config_1.config.pageId,
@@ -47706,7 +47707,7 @@ async function open(context) {
             [config_1.config.assigneePropName]: {
                 people: issue?.assignees.map((user) => {
                     return { id: config_1.config.ghNotionUserMap[user.login] };
-                })
+                }) ?? {}
             },
             [config_1.config.labelPropName]: {
                 multi_select: labels.map(name => { return { name }; })

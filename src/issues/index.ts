@@ -26,7 +26,7 @@ export async function moveIssueOnBoard(notion: Client, pageId: string, newStatus
 
 export async function updateDBLabels(notion: Client, context: Context): Promise<string[]> {
     const options = await getDBLabels(notion);
-    const labelNames = context.payload.labels.map((label: any) => label.name);
+    const labelNames = context.payload.issue?.labels.map((label: any) => label.name);
     labelNames.forEach((labelName: string) => {
         if (options.find((elem: any) => elem["name"] === labelName) === null) {
             options.push({

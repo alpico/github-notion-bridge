@@ -15,6 +15,7 @@ export async function open(context: Context): Promise<void> {
     const repoName = await updateRepoTags(notion, context);
     // get the labels
     const labels = await updateDBLabels(notion, context);
+    core.info(JSON.stringify(labels));
 
     const newPage = await notion.pages.create({
         parent: {
@@ -41,7 +42,7 @@ export async function open(context: Context): Promise<void> {
             [config.assigneePropName]: {
                 people: issue?.assignees.map((user: any) => {
                     return { id: config.ghNotionUserMap[user.login] };
-                })
+                }) ?? {}
             },
             [config.labelPropName]: {
                 multi_select: labels.map(name => { return { name } })
