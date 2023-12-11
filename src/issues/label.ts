@@ -2,7 +2,7 @@ import { Context } from "@actions/github/lib/context";
 import { Client } from "@notionhq/client"
 import { apiKey, pageId, githubLinkFromIssue, notionPageIdsFromGithubLink } from "../main";
 import { setPageLabels, getPageLabels } from ".";
-import { labelPropName } from "src/config";
+import { config } from "src/config";
 import * as core from "@actions/core";
 
 export async function label(context: Context): Promise<void> {
@@ -42,7 +42,7 @@ async function updateDBLabels(notion: Client, context: Context): Promise<string>
 
 async function getDBLabels(notion: Client): Promise<any> {
     const response = await notion.databases.retrieve({ database_id: pageId });
-    return (response.properties[labelPropName] as any)["multi_select"]["options"];
+    return (response.properties[config.labelPropName] as any)["multi_select"]["options"];
 }
 
 async function updatePageLabels(notion: Client, pageId: string, labelName: string): Promise<void> {

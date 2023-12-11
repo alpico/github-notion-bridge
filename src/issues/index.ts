@@ -7,14 +7,14 @@ export { assign } from './assign'
 export { unassign } from './unassign'
 export { label } from './label'
 export { unlabel } from './unlabel'
+import { config } from 'src/config';
 import { Client } from "@notionhq/client";
-import { assigneePropName, boardColumnPropName, linkPropName } from 'src/config';
 
 export async function moveIssueOnBoard(notion: Client, pageId: string, newStatus: string): Promise<void> {
     const response = await notion.pages.update({
         page_id: pageId,
         properties: {
-            [boardColumnPropName]: {
+            [config.boardColumnPropName]: {
                 status: { name: newStatus }
             }
         }
@@ -25,7 +25,7 @@ export async function moveIssueOnBoard(notion: Client, pageId: string, newStatus
 export async function getPageLabels(notion: Client, pageId: string): Promise<any> {
     const response = await notion.pages.properties.retrieve({
         page_id: pageId,
-        property_id: linkPropName
+        property_id: config.linkPropName
     }) as any;
     return response["multi_select"];
 }
@@ -46,7 +46,7 @@ export async function setPageLabels(notion: Client, pageId: string, labels: any)
 export async function getAssignee(notion: Client, pageId: string): Promise<any> {
     const response = await notion.pages.properties.retrieve({
         page_id: pageId,
-        property_id: assigneePropName
+        property_id: config.assigneePropName
     }) as any;
     console.log(response.results);
 

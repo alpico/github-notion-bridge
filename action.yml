@@ -2,6 +2,69 @@ name: 'Github Notion Bridge'
 description: 'Mirrors activity from Github in Notion'
 author: 'alpico'
 
+inputs:
+    gh_token:
+      required: true
+      description: "The token which has access to your github repositories"
+
+    notion_api_key:
+      required: true
+      description: "Your notion integration secret"
+
+    notion_page_id:
+      required: true
+      description: "The PageID of the database in which the issues should be mirrored"
+
+    gh_notion_user_map:
+      required: false
+      default: "{}"
+      description: "Maps Github usernames to Notion user IDs"
+
+    gh_label_prop_name:
+      required: false
+      default: "Github Labels"
+      description: "The property in the database to which the Github labels should be written"
+
+    gh_link_prop_name:
+      required: false
+      default: "Github Link"
+      description: "The property in the database to which the link to the Github issue should be written"
+
+    gh_repo_prop_name:
+      required: false
+      default: "Repository"
+      description: "The property in the database to which the name of the Github repository should be written"
+
+    gh_assignee_prop_name:
+      required: false
+      default: "Assignees"
+      description: "The property in the database to which the assignee should be written"
+
+    board_column_prop_name:
+      required: false
+      default: "Status"
+      description: "The property in the database which indicates the column in which the issue is placed"
+
+    board_column_default_val:
+      required: false
+      default: "Backlog"
+      description: "The column of the database in which newly created issues should be placed"
+
+    board_column_done_val:
+      required: false
+      default: "Done"
+      description: "The column of the database in which closed issues should be placed"
+
+    board_column_reopened_val:
+      required: false
+      default: "In Progress"
+      description: "The column of the database in which reopened issues should be placed"
+
+    notion_issue_icon_url:
+      required: false
+      default: "https://www.notion.so/images/external_integrations/github-icon.png"
+      description: "A URL to an icon for the issues in Notion"
+
 runs:
   using: node20
   main: dist/index.js
