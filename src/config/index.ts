@@ -21,6 +21,7 @@ export type Config = {
 export let config: Config;
 if (process.argv.find(x => x === "--local") !== null) {
     core.info("Using local configuration");
+    core.info(`${process.argv.find(x => x === "--local")}`);
     config = config_local();
 } else {
     core.info("Using action configuration...");
