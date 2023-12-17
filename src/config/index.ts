@@ -8,7 +8,6 @@ export type Config = {
     apiKey: string,
     labelPropName: string,
     linkPropName: string,
-    repoPropName: string,
     assigneePropName: string,
     boardColumnPropName: string,
     boardColumnDefaultVal: string,

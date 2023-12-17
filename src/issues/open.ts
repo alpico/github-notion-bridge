@@ -12,7 +12,6 @@ export async function open(context: Context): Promise<void> {
     core.info(`Creating a new issue for ${link}...`);
     const notion = new Client({ auth: config.apiKey });
     const issue = context.payload.issue;
-    const repoName = await updateRepoTags(notion, context);
     // get the labels
     const labels = await updateDBLabels(notion, context);
     core.info(JSON.stringify(labels));
@@ -36,9 +35,6 @@ export async function open(context: Context): Promise<void> {
             [config.boardColumnPropName]: {
                 status: { name: "Backlog" },
             },
-            [config.repoPropName]: {
-                select: { name: repoName }
-            },
             [config.assigneePropName]: {
                 people: issue?.assignees.map((user: any) => {
                     return { id: config.ghNotionUserMap[user.login] };
@@ -51,30 +47,4 @@ export async function open(context: Context): Promise<void> {
         children: markdownToBlocks(issue?.body ?? "") as Array<BlockObjectRequest>,
     });
     core.info(`Page created: ${newPage.id}`);
-}
-
-async function updateRepoTags(notion: Client, context: Context): Promise<string> {
-    const options = await getRepoTags(notion);
-    const repoName = context.payload.repository?.name ?? "";
-    if (options.find((elem: any) => elem["name"] === repoName) === null) {
-        options.push({ name: repoName })
-        const response = await notion.databases.update({
-            database_id: config.pageId,
-            properties: {
-                [config.repoPropName]: {
-                    select: {
-                        options: options
-                    }
-                }
-            }
-        });
-        core.debug(`open: ${JSON.stringify(response)}`);
-    }
-    return repoName;
-}
-
-async function getRepoTags(notion: Client): Promise<any> {
-    const response = await notion.databases.retrieve({ database_id: config.pageId });
-    const repo = response.properties[config.repoPropName] as any;
-    return repo["select"]["options"];
 }

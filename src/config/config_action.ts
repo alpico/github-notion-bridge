@@ -10,7 +10,6 @@ export function config(): Config {
         apiKey: core.getInput('notion_api_key'),
         labelPropName: core.getInput('gh_label_prop_name'),
         linkPropName: core.getInput('gh_link_prop_name'),
-        repoPropName: core.getInput('gh_repo_prop_name'),
         assigneePropName: core.getInput('gh_assignee_prop_name'),
         boardColumnPropName: core.getInput('board_column_prop_name'),
         boardColumnDefaultVal: core.getInput('board_column_default_val'),

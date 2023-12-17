@@ -22,7 +22,6 @@ export function config(): Config {
     const apiKey = apiKeyTmp!;
     const labelPropName = process.env.GH_LABEL_PROP_NAME ?? "Github Labels";
     const linkPropName = process.env.GH_LINK_PROP_NAME ?? "Github Link";
-    const repoPropName = process.env.GH_REPO_PROP_NAME ?? "Repository";
     const assigneePropName = process.env.ASSIGNEE_PROP_NAME ?? "Assignees";
     const boardColumnPropName = process.env.BOARD_COLUMN_PROP_NAME ?? "Status";
     const boardColumnDefaultVal = process.env.BOARD_COLUMN_DEFAULT_VAL ?? "Backlog";
@@ -37,7 +36,6 @@ export function config(): Config {
         apiKey,
         labelPropName,
         linkPropName,
-        repoPropName,
         assigneePropName,
         boardColumnPropName,
         boardColumnDefaultVal,
