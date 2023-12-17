@@ -27,7 +27,7 @@ async function updateAssignee(
   notionUserId: string
 ): Promise<void> {
   const assignee = await getAssignee(notion, pageId)
-  if (assignee['id'] === notionUserId) {
+  if (assignee && assignee.id === notionUserId) {
     core.info(`Assignee already matches for page ${pageId}`)
     return
   }

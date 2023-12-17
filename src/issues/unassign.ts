@@ -18,7 +18,7 @@ export async function unassign(context: Context): Promise<void> {
   const notionUser = config.ghNotionUserMap[ghUser]
   for (const issuePageId of issuePageIds) {
     const assignee = await getAssignee(notion, issuePageId)
-    if (assignee['id'] !== notionUser) {
+    if (assignee && assignee.id !== notionUser) {
       return
     }
     await setAssignees(notion, issuePageId, [])

@@ -47261,7 +47261,7 @@ async function assign(context) {
 exports.assign = assign;
 async function updateAssignee(notion, pageId, notionUserId) {
     const assignee = await (0, _1.getAssignee)(notion, pageId);
-    if (assignee['id'] === notionUserId) {
+    if (assignee && assignee.id === notionUserId) {
         core.info(`Assignee already matches for page ${pageId}`);
         return;
     }
@@ -47520,18 +47520,13 @@ async function moveIssueOnBoard(notion, pageId, newStatus) {
 }
 exports.moveIssueOnBoard = moveIssueOnBoard;
 async function updateDBLabels(notion, context) {
-    const options = await getDBLabels(notion);
+    const dbLabels = await getDBLabels(notion);
+    // const options = await getDBLabels(notion)
     const labelNames = context.payload.issue?.labels.map((label) => label.name);
-    let noLabelsAdded = true;
-    for (const labelName of labelNames) {
-        if (options.find((elem) => elem.name === labelName) === null) {
-            noLabelsAdded = false;
-            options.push({
-                name: labelName
-            });
-        }
-    }
-    if (noLabelsAdded) {
+    const newOptions = labelNames
+        .filter(name => !dbLabels.find((elem) => elem.name === name))
+        .map(name => ({ name }));
+    if (newOptions.length === 0) {
         core.info('All labels already present in database.');
         return labelNames;
     }
@@ -47540,7 +47535,7 @@ async function updateDBLabels(notion, context) {
         properties: {
             labelPropName: {
                 multi_select: {
-                    options
+                    options: [...dbLabels, ...newOptions]
                 }
             }
         }
@@ -47590,6 +47585,9 @@ async function getAssignee(notion, pageId) {
     }));
     /* eslint-enable */
     core.debug(`getAssignee for ${pageId}: ${response.results}`);
+    if (response.results.length === 0) {
+        return null;
+    }
     return response.results[0]?.people ?? [];
 }
 exports.getAssignee = getAssignee;
@@ -47738,14 +47736,12 @@ async function open(context) {
                 status: { name: config_1.config.boardColumnDefaultVal }
             },
             [config_1.config.assigneePropName]: {
-                people: issue?.assignees.map((user) => {
-                    return { id: config_1.config.ghNotionUserMap[user.login] };
-                }) ?? {}
+                people: issue?.assignees.map((user) => ({
+                    id: config_1.config.ghNotionUserMap[user.login]
+                })) ?? []
             },
             [config_1.config.labelPropName]: {
-                multi_select: labels.map(name => {
-                    return { name };
-                })
+                multi_select: labels.map(name => ({ name }))
             },
             [config_1.config.relationPropName]: {
                 relation: [{ id: config_1.config.relatedPage }]
@@ -47854,7 +47850,7 @@ async function unassign(context) {
     const notionUser = config_1.config.ghNotionUserMap[ghUser];
     for (const issuePageId of issuePageIds) {
         const assignee = await (0, _1.getAssignee)(notion, issuePageId);
-        if (assignee['id'] !== notionUser) {
+        if (assignee && assignee.id !== notionUser) {
             return;
         }
         await (0, _1.setAssignees)(notion, issuePageId, []);

@@ -32,22 +32,20 @@ export async function updateDBLabels(
   notion: Client,
   context: Context
 ): Promise<string[]> {
-  const options = await getDBLabels(notion)
+  const dbLabels = await getDBLabels(notion)
+
+  // const options = await getDBLabels(notion)
   const labelNames = context.payload.issue?.labels.map(
     (label: { name: string }) => label.name
-  )
-  let noLabelsAdded = true
-  for (const labelName of labelNames) {
-    if (
-      options.find((elem: { name: string }) => elem.name === labelName) === null
-    ) {
-      noLabelsAdded = false
-      options.push({
-        name: labelName
-      })
-    }
-  }
-  if (noLabelsAdded) {
+  ) as string[]
+
+  const newOptions = labelNames
+    .filter(
+      name => !dbLabels.find((elem: { name: string }) => elem.name === name)
+    )
+    .map(name => ({ name }))
+
+  if (newOptions.length === 0) {
     core.info('All labels already present in database.')
     return labelNames
   }
@@ -56,7 +54,7 @@ export async function updateDBLabels(
     properties: {
       labelPropName: {
         multi_select: {
-          options
+          options: [...dbLabels, ...newOptions]
         }
       }
     }
@@ -110,7 +108,7 @@ export async function setPageLabels(
 export async function getAssignee(
   notion: Client,
   pageId: string
-): Promise<{ id: string }> {
+): Promise<{ id: string } | null> {
   /* eslint-disable @typescript-eslint/no-explicit-any */
   const response = (await notion.pages.properties.retrieve({
     page_id: pageId,
@@ -118,6 +116,10 @@ export async function getAssignee(
   })) as any
   /* eslint-enable */
   core.debug(`getAssignee for ${pageId}: ${response.results}`)
+
+  if (response.results.length === 0) {
+    return null
+  }
 
   return response.results[0]?.people ?? []
 }

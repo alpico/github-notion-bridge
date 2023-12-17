@@ -36,14 +36,12 @@ export async function open(context: Context): Promise<void> {
       },
       [config.assigneePropName]: {
         people:
-          issue?.assignees.map((user: { login: string }) => {
-            return { id: config.ghNotionUserMap[user.login] }
-          }) ?? {}
+          issue?.assignees.map((user: { login: string }) => ({
+            id: config.ghNotionUserMap[user.login]
+          })) ?? []
       },
       [config.labelPropName]: {
-        multi_select: labels.map(name => {
-          return { name }
-        })
+        multi_select: labels.map(name => ({ name }))
       },
       [config.relationPropName]: {
         relation: [{ id: config.relatedPage }]
