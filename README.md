@@ -12,14 +12,15 @@ The only assumption we make for your issue board is that it has a property which
 
 ## Setup
 
-It is strongly encouraged to do an initial setup by using the
+It is strongly encouraged to do an initial setup by using the [issue importer](https://github.com/alpico/github-notion-importer).
 
 ### Notion
 
 - [Create an integration](https://www.notion.so/my-integration)
-- Create an issue board. Any further changes to the board needed will be performed automatically, so don't worry about matching a template or anything.
+- Create an issue board.
 - [Find out the user IDs of the people on the issue board](https://developers.notion.com/reference/get-users)
 - Create a relation to separate the different repositories you're adding issues from in your issue board. Take note of the ID of the page holding the issues for this specific repository.
+- Any further changes to the board needed will be performed automatically, so don't worry about matching a template or anything.
 
 ### Github
 
