@@ -40,7 +40,13 @@ jobs:
     steps:
       - uses: "alpico/github-notion-bridge"
         with:
-          -
+          gh_token: ${{ secrets.GH_TOKEN }}
+          notion_page_id: "83fbbd2006ec436fa76579837e795bab"
+          # Make sure this is one line, otherwise Github doesn't parse it correctly
+          gh_notion_user_map: '{"aSillyName":"3ab2cd1ef-aaaa-bbbb", "someoneElse": "aaaabbbb-cccc-0000"}'
+          board_column_prop_name: "Status"
+          relation_prop_name: "Project"
+          related_page: "1ab345890abcdef"
 ```
 
 ### Local
@@ -69,3 +75,17 @@ where `eventType` can be any of the following:
 - reopened
 - unassigned
 - unlabeled
+
+## Limitations
+
+### The Github Notion user map needs to be written in one line
+
+This is a Github limitation and can't be fixed inside this action, unfortunately.
+
+### Race Conditions when emitting many similar events at once
+
+Github runs all actions in parallel, so if you open an issue and add some labels, then there will be issues with the labels attempting to overwrite each other.
+
+Therefore, we don't get the labels and the assignees from the event, but instead fetch them from the issue object and make sure to write all of them at once.
+
+You shouldn't see any issues with this but this is the reason why the open event also writes as much data as it can.
