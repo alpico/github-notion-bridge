@@ -47010,7 +47010,6 @@ function config() {
         apiKey: core.getInput('notion_api_key'),
         labelPropName: core.getInput('gh_label_prop_name'),
         linkPropName: core.getInput('gh_link_prop_name'),
-        repoPropName: core.getInput('gh_repo_prop_name'),
         assigneePropName: core.getInput('gh_assignee_prop_name'),
         boardColumnPropName: core.getInput('board_column_prop_name'),
         boardColumnDefaultVal: core.getInput('board_column_default_val'),
@@ -47053,7 +47052,6 @@ function config() {
     const apiKey = apiKeyTmp;
     const labelPropName = process.env.GH_LABEL_PROP_NAME ?? "Github Labels";
     const linkPropName = process.env.GH_LINK_PROP_NAME ?? "Github Link";
-    const repoPropName = process.env.GH_REPO_PROP_NAME ?? "Repository";
     const assigneePropName = process.env.ASSIGNEE_PROP_NAME ?? "Assignees";
     const boardColumnPropName = process.env.BOARD_COLUMN_PROP_NAME ?? "Status";
     const boardColumnDefaultVal = process.env.BOARD_COLUMN_DEFAULT_VAL ?? "Backlog";
@@ -47067,7 +47065,6 @@ function config() {
         apiKey,
         labelPropName,
         linkPropName,
-        repoPropName,
         assigneePropName,
         boardColumnPropName,
         boardColumnDefaultVal,
@@ -47248,6 +47245,7 @@ exports.assign = assign;
 async function updateAssignee(notion, pageId, notionUserId) {
     const assignee = await (0, _1.getAssignee)(notion, pageId);
     if (assignee["id"] === notionUserId) {
+        core.info(`Assignee already matches for page ${pageId}`);
         return;
     }
     await (0, _1.setAssignees)(notion, pageId, [{ "id": notionUserId }]);
@@ -47351,7 +47349,7 @@ async function deletePage(context) {
             page_id: issuePageId,
             archived: true,
         });
-        core.debug(JSON.stringify(response));
+        core.debug(`deletePage for ${issuePageId}: ${JSON.stringify(response)}`);
     });
 }
 exports.deletePage = deletePage;
@@ -47419,7 +47417,7 @@ async function updateTitle(notion, pageId, new_title) {
             }
         },
     });
-    core.debug(JSON.stringify(response));
+    core.debug(`updateTitle for ${pageId}: ${JSON.stringify(response)}`);
 }
 async function updateBody(notion, pageId, newBody) {
     await deleteChildBlocks(notion, pageId);
@@ -47427,7 +47425,7 @@ async function updateBody(notion, pageId, newBody) {
         block_id: pageId,
         children: (0, martian_1.markdownToBlocks)(newBody),
     });
-    core.debug(JSON.stringify(response));
+    core.debug(`updateBody for ${pageId}: ${JSON.stringify(response)}`);
 }
 async function deleteChildBlocks(notion, pageId) {
     // Get child blocks
@@ -47502,19 +47500,25 @@ async function moveIssueOnBoard(notion, pageId, newStatus) {
             }
         }
     });
-    core.debug(JSON.stringify(response));
+    core.debug(`moveIssueOnBoard for ${pageId}: ${JSON.stringify(response)}`);
 }
 exports.moveIssueOnBoard = moveIssueOnBoard;
 async function updateDBLabels(notion, context) {
     const options = await getDBLabels(notion);
     const labelNames = context.payload.issue?.labels.map((label) => label.name);
+    let noLabelsAdded = true;
     labelNames.forEach((labelName) => {
         if (options.find((elem) => elem["name"] === labelName) === null) {
+            noLabelsAdded = false;
             options.push({
                 name: labelName,
             });
         }
     });
+    if (noLabelsAdded) {
+        core.info("All labels already present in database.");
+        return labelNames;
+    }
     const response = await notion.databases.update({
         database_id: config_1.config.pageId,
         properties: {
@@ -47525,7 +47529,7 @@ async function updateDBLabels(notion, context) {
             }
         }
     });
-    core.debug(JSON.stringify(response));
+    core.debug(`updateDBLabels: ${JSON.stringify(response)}`);
     return labelNames;
 }
 exports.updateDBLabels = updateDBLabels;
@@ -47539,7 +47543,7 @@ async function getPageLabels(notion, pageId) {
         page_id: pageId,
         property_id: config_1.config.labelPropName
     });
-    core.debug(JSON.stringify(response));
+    core.debug(`getPageLabels for ${pageId}: ${JSON.stringify(response)}`);
     return response["multi_select"];
 }
 exports.getPageLabels = getPageLabels;
@@ -47552,7 +47556,7 @@ async function setPageLabels(notion, pageId, labels) {
             }
         }
     });
-    core.debug(JSON.stringify(response));
+    core.debug(`setPageLabels for ${pageId}: ${JSON.stringify(response)}`);
 }
 exports.setPageLabels = setPageLabels;
 // For some reason we only ever get one assignee instead of an array
@@ -47561,7 +47565,7 @@ async function getAssignee(notion, pageId) {
         page_id: pageId,
         property_id: config_1.config.assigneePropName
     });
-    core.debug(response.results);
+    core.debug(`getAssignee for ${pageId}: ${response.results}`);
     return response.results[0]?.people ?? [];
 }
 exports.getAssignee = getAssignee;
@@ -47574,7 +47578,7 @@ async function setAssignees(notion, pageId, assignees) {
             }
         }
     });
-    core.debug(JSON.stringify(response));
+    core.debug(`setAssignees for ${pageId}: ${JSON.stringify(response)}`);
 }
 exports.setAssignees = setAssignees;
 
@@ -47630,7 +47634,18 @@ async function label(context) {
 exports.label = label;
 async function updatePageLabels(notion, pageId, labelNames) {
     const labels = await (0, _1.getPageLabels)(notion, pageId);
-    labels.concat(labelNames.map(name => { return { name }; }));
+    let noLabelsAdded = true;
+    console.log(typeof labelNames);
+    labelNames.forEach(label => {
+        if (!labels.find((x) => x.name === label)) {
+            noLabelsAdded = false;
+            labels.push({ name: label });
+        }
+    });
+    if (noLabelsAdded) {
+        core.info(`All labels already set for page ${pageId}`);
+        return;
+    }
     await (0, _1.setPageLabels)(notion, pageId, labels);
 }
 
@@ -47678,7 +47693,6 @@ async function open(context) {
     core.info(`Creating a new issue for ${link}...`);
     const notion = new client_1.Client({ auth: config_1.config.apiKey });
     const issue = context.payload.issue;
-    const repoName = await updateRepoTags(notion, context);
     // get the labels
     const labels = await (0, _1.updateDBLabels)(notion, context);
     core.info(JSON.stringify(labels));
@@ -47701,9 +47715,6 @@ async function open(context) {
             [config_1.config.boardColumnPropName]: {
                 status: { name: "Backlog" },
             },
-            [config_1.config.repoPropName]: {
-                select: { name: repoName }
-            },
             [config_1.config.assigneePropName]: {
                 people: issue?.assignees.map((user) => {
                     return { id: config_1.config.ghNotionUserMap[user.login] };
@@ -47718,30 +47729,6 @@ async function open(context) {
     core.info(`Page created: ${newPage.id}`);
 }
 exports.open = open;
-async function updateRepoTags(notion, context) {
-    const options = await getRepoTags(notion);
-    const repoName = context.payload.repository?.name ?? "";
-    if (options.find((elem) => elem["name"] === repoName) === null) {
-        options.push({ name: repoName });
-        const response = await notion.databases.update({
-            database_id: config_1.config.pageId,
-            properties: {
-                [config_1.config.repoPropName]: {
-                    select: {
-                        options: options
-                    }
-                }
-            }
-        });
-        core.debug(JSON.stringify(response));
-    }
-    return repoName;
-}
-async function getRepoTags(notion) {
-    const response = await notion.databases.retrieve({ database_id: config_1.config.pageId });
-    const repo = response.properties[config_1.config.repoPropName];
-    return repo["select"]["options"];
-}
 
 
 /***/ }),
