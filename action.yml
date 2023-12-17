@@ -15,6 +15,14 @@ inputs:
       required: true
       description: "The PageID of the database in which the issues should be mirrored"
 
+    relation_prop_name:
+      required: true
+      description: "The column in which the relation to a page specific to this repo is"
+
+    related_page:
+      required: true
+      description: "The id of the page which holds the issues local to this repo"
+
     gh_notion_user_map:
       required: false
       default: "{}"

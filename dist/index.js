@@ -47015,6 +47015,8 @@ function config() {
         boardColumnDefaultVal: core.getInput('board_column_default_val'),
         boardColumnDoneVal: core.getInput('board_column_done_val'),
         boardColumnReopenedVal: core.getInput('board_column_reopened_val'),
+        relationPropName: core.getInput('relation_prop_name'),
+        relatedPage: core.getInput('related_page'),
         ghNotionUserMap: JSON.parse(core.getInput('gh_notion_user_map')),
         issueIcon: core.getInput('notion_issue_icon_url')
     };
@@ -47057,6 +47059,16 @@ function config() {
     const boardColumnDefaultVal = process.env.BOARD_COLUMN_DEFAULT_VAL ?? "Backlog";
     const boardColumnDoneVal = process.env.BOARD_COLUMN_DONE_VAL ?? "Done";
     const boardColumnReopenedVal = process.env.BOARD_COLUMN_REOPENED_VAL ?? "In Progress";
+    const relatedPageTmp = process.env.RELATED_PAGE;
+    if (!relatedPageTmp) {
+        throw new Error("Please specify a related DB (e.g. \"GithubRepo\") for a cleaner database");
+    }
+    const relatedPage = relatedPageTmp;
+    const relationPropNameTmp = process.env.RELATION_PROP_NAME;
+    if (!relationPropNameTmp) {
+        throw new Error("Please specify the property name on which the relation is defined");
+    }
+    const relationPropName = relationPropNameTmp;
     const ghNotionUserMap = JSON.parse(process.env.GITHUB_NOTION_USER_MAP ?? "");
     const issueIcon = process.env.NOTION_ISSUE_ICON ?? "https://www.notion.so/images/external_integrations/github-icon.png";
     return {
@@ -47070,6 +47082,8 @@ function config() {
         boardColumnDefaultVal,
         boardColumnDoneVal,
         boardColumnReopenedVal,
+        relationPropName,
+        relatedPage,
         issueIcon,
         ghNotionUserMap,
     };
@@ -47635,7 +47649,6 @@ exports.label = label;
 async function updatePageLabels(notion, pageId, labelNames) {
     const labels = await (0, _1.getPageLabels)(notion, pageId);
     let noLabelsAdded = true;
-    console.log(typeof labelNames);
     labelNames.forEach(label => {
         if (!labels.find((x) => x.name === label)) {
             noLabelsAdded = false;
@@ -47695,7 +47708,6 @@ async function open(context) {
     const issue = context.payload.issue;
     // get the labels
     const labels = await (0, _1.updateDBLabels)(notion, context);
-    core.info(JSON.stringify(labels));
     const newPage = await notion.pages.create({
         parent: {
             database_id: config_1.config.pageId,
@@ -47713,7 +47725,7 @@ async function open(context) {
                 url: (0, main_1.githubLinkFromIssue)(context)
             },
             [config_1.config.boardColumnPropName]: {
-                status: { name: "Backlog" },
+                status: { name: config_1.config.boardColumnDefaultVal },
             },
             [config_1.config.assigneePropName]: {
                 people: issue?.assignees.map((user) => {
@@ -47722,6 +47734,9 @@ async function open(context) {
             },
             [config_1.config.labelPropName]: {
                 multi_select: labels.map(name => { return { name }; })
+            },
+            [config_1.config.relationPropName]: {
+                relation: [{ id: config_1.config.relatedPage }]
             }
         },
         children: (0, martian_1.markdownToBlocks)(issue?.body ?? ""),

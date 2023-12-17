@@ -27,6 +27,16 @@ export function config(): Config {
     const boardColumnDefaultVal = process.env.BOARD_COLUMN_DEFAULT_VAL ?? "Backlog";
     const boardColumnDoneVal = process.env.BOARD_COLUMN_DONE_VAL ?? "Done";
     const boardColumnReopenedVal = process.env.BOARD_COLUMN_REOPENED_VAL ?? "In Progress";
+    const relatedPageTmp = process.env.RELATED_PAGE;
+    if (!relatedPageTmp) {
+        throw new Error("Please specify a related DB (e.g. \"GithubRepo\") for a cleaner database");
+    }
+    const relatedPage = relatedPageTmp!!;
+    const relationPropNameTmp = process.env.RELATION_PROP_NAME;
+    if (!relationPropNameTmp) {
+        throw new Error("Please specify the property name on which the relation is defined");
+    }
+    const relationPropName = relationPropNameTmp!!;
     const ghNotionUserMap = JSON.parse(process.env.GITHUB_NOTION_USER_MAP ?? "");
     const issueIcon = process.env.NOTION_ISSUE_ICON ?? "https://www.notion.so/images/external_integrations/github-icon.png";
 
@@ -41,6 +51,8 @@ export function config(): Config {
         boardColumnDefaultVal,
         boardColumnDoneVal,
         boardColumnReopenedVal,
+        relationPropName,
+        relatedPage,
         issueIcon,
         ghNotionUserMap,
     };

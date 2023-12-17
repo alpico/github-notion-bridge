@@ -15,6 +15,8 @@ export function config(): Config {
         boardColumnDefaultVal: core.getInput('board_column_default_val'),
         boardColumnDoneVal: core.getInput('board_column_done_val'),
         boardColumnReopenedVal: core.getInput('board_column_reopened_val'),
+        relationPropName: core.getInput('relation_prop_name'),
+        relatedPage: core.getInput('related_page'),
         ghNotionUserMap: JSON.parse(core.getInput('gh_notion_user_map')),
         issueIcon: core.getInput('notion_issue_icon_url')
     };

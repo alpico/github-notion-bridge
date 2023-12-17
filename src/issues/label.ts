@@ -21,7 +21,6 @@ export async function label(context: Context): Promise<void> {
 async function updatePageLabels(notion: Client, pageId: string, labelNames: string[]): Promise<void> {
     const labels = await getPageLabels(notion, pageId);
     let noLabelsAdded = true;
-    console.log(typeof labelNames);
     labelNames.forEach(label => {
         if (!labels.find((x: any) => x.name === label)) {
             noLabelsAdded = false;

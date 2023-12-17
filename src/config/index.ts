@@ -14,6 +14,8 @@ export type Config = {
     boardColumnDoneVal: string,
     boardColumnReopenedVal: string,
     issueIcon: string,
+    relationPropName: string,
+    relatedPage: string,
     ghNotionUserMap: Record<string, string>,
 }
 

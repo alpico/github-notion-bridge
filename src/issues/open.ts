@@ -14,7 +14,6 @@ export async function open(context: Context): Promise<void> {
     const issue = context.payload.issue;
     // get the labels
     const labels = await updateDBLabels(notion, context);
-    core.info(JSON.stringify(labels));
 
     const newPage = await notion.pages.create({
         parent: {
@@ -33,7 +32,7 @@ export async function open(context: Context): Promise<void> {
                 url: githubLinkFromIssue(context)
             },
             [config.boardColumnPropName]: {
-                status: { name: "Backlog" },
+                status: { name: config.boardColumnDefaultVal },
             },
             [config.assigneePropName]: {
                 people: issue?.assignees.map((user: any) => {
@@ -42,6 +41,9 @@ export async function open(context: Context): Promise<void> {
             },
             [config.labelPropName]: {
                 multi_select: labels.map(name => { return { name } })
+            },
+            [config.relationPropName]: {
+                relation: [{ id: config.relatedPage }]
             }
         },
         children: markdownToBlocks(issue?.body ?? "") as Array<BlockObjectRequest>,
