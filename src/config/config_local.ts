@@ -29,7 +29,7 @@ export function config(): Config {
     const boardColumnReopenedVal = process.env.BOARD_COLUMN_REOPENED_VAL ?? "In Progress";
     const relatedPageTmp = process.env.RELATED_PAGE;
     if (!relatedPageTmp) {
-        throw new Error("Please specify a related DB (e.g. \"GithubRepo\") for a cleaner database");
+        throw new Error("Please specify a related page (e.g. \"GithubRepo\") for a cleaner database");
     }
     const relatedPage = relatedPageTmp!!;
     const relationPropNameTmp = process.env.RELATION_PROP_NAME;
