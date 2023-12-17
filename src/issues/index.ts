@@ -21,19 +21,25 @@ export async function moveIssueOnBoard(notion: Client, pageId: string, newStatus
             }
         }
     });
-    core.debug(JSON.stringify(response));
+    core.debug(`moveIssueOnBoard for ${pageId}: ${JSON.stringify(response)}`);
 }
 
 export async function updateDBLabels(notion: Client, context: Context): Promise<string[]> {
     const options = await getDBLabels(notion);
     const labelNames = context.payload.issue?.labels.map((label: any) => label.name);
+    let noLabelsAdded = true;
     labelNames.forEach((labelName: string) => {
         if (options.find((elem: any) => elem["name"] === labelName) === null) {
+            noLabelsAdded = false
             options.push({
                 name: labelName,
             })
         }
     });
+    if (noLabelsAdded) {
+        core.info("All labels already present in database.");
+        return labelNames;
+    }
     const response = await notion.databases.update({
         database_id: config.pageId,
         properties: {
@@ -44,7 +50,7 @@ export async function updateDBLabels(notion: Client, context: Context): Promise<
             }
         }
     });
-    core.debug(JSON.stringify(response));
+    core.debug(`updateDBLabels: ${JSON.stringify(response)}`);
     return labelNames;
 }
 
@@ -58,7 +64,7 @@ export async function getPageLabels(notion: Client, pageId: string): Promise<any
         page_id: pageId,
         property_id: config.labelPropName
     }) as any;
-    core.debug(JSON.stringify(response));
+    core.debug(`getPageLabels for ${pageId}: ${JSON.stringify(response)}`);
     return response["multi_select"];
 }
 
@@ -71,7 +77,7 @@ export async function setPageLabels(notion: Client, pageId: string, labels: any)
             }
         }
     })
-    core.debug(JSON.stringify(response));
+    core.debug(`setPageLabels for ${pageId}: ${JSON.stringify(response)}`);
 }
 
 // For some reason we only ever get one assignee instead of an array
@@ -80,7 +86,7 @@ export async function getAssignee(notion: Client, pageId: string): Promise<any> 
         page_id: pageId,
         property_id: config.assigneePropName
     }) as any;
-    core.debug(response.results);
+    core.debug(`getAssignee for ${pageId}: ${response.results}`);
 
     return response.results[0]?.people ?? [];
 }
@@ -94,5 +100,5 @@ export async function setAssignees(notion: Client, pageId: string, assignees: an
             }
         }
     })
-    core.debug(JSON.stringify(response));
+    core.debug(`setAssignees for ${pageId}: ${JSON.stringify(response)}`);
 }

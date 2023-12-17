@@ -20,6 +20,7 @@ export async function assign(context: Context): Promise<void> {
 async function updateAssignee(notion: Client, pageId: string, notionUserId: string): Promise<void> {
     const assignee = await getAssignee(notion, pageId);
     if (assignee["id"] === notionUserId) {
+        core.info(`Assignee already matches for page ${pageId}`);
         return;
     }
     await setAssignees(notion, pageId, [{ "id": notionUserId }]);

@@ -20,6 +20,17 @@ export async function label(context: Context): Promise<void> {
 
 async function updatePageLabels(notion: Client, pageId: string, labelNames: string[]): Promise<void> {
     const labels = await getPageLabels(notion, pageId);
-    labels.concat(labelNames.map(name => { return { name } }));
+    let noLabelsAdded = true;
+    console.log(typeof labelNames);
+    labelNames.forEach(label => {
+        if (!labels.find((x: any) => x.name === label)) {
+            noLabelsAdded = false;
+            labels.push({ name: label });
+        }
+    });
+    if (noLabelsAdded) {
+        core.info(`All labels already set for page ${pageId}`);
+        return;
+    }
     await setPageLabels(notion, pageId, labels);
 }

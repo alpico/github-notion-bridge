@@ -15,6 +15,6 @@ export async function deletePage(context: Context): Promise<void> {
             page_id: issuePageId,
             archived: true,
         });
-        core.debug(JSON.stringify(response));
+        core.debug(`deletePage for ${issuePageId}: ${JSON.stringify(response)}`);
     })
 }
