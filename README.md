@@ -1,11 +1,11 @@
-# Github Notion Bridge
+# GitHub Notion Bridge
 
-Event-based management of Github issues on Notion.
+Event-based management of GitHub issues on Notion.
 
 ## Why?
 
-Other exporters of Github issues into Notion gather __all__ issues on Github, then gather __all__ issues which have been synced from Github on Notion and try to find the differences between these.
-This method is excessive since the Github event can tell you exactly what changed.
+Other exporters of GitHub issues into Notion gather __all__ issues on GitHub, then gather __all__ issues which have been synced from GitHub on Notion and try to find the differences between these.
+This method is excessive since the GitHub event can tell you exactly what changed.
 
 Another pain point is that specific Notion issue board formats are required, tools going as far as to offer templates, so their tool works.
 The only assumption we make for your issue board is that it has a property which defines the columns, the rest can be configured but also offers sane defaults.
@@ -22,7 +22,7 @@ It is strongly encouraged to do an initial setup by using the [issue importer](h
 - Create a relation to separate the different repositories you're adding issues from in your issue board. Take note of the ID of the page holding the issues for this specific repository.
 - Any further changes to the board needed will be performed automatically, so don't worry about matching a template or anything.
 
-### Github
+### GitHub
 
 - [Create an access token with read permissions on the repository you want to export issues from](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)
 
@@ -43,7 +43,7 @@ jobs:
         with:
           gh_token: ${{ secrets.GH_TOKEN }}
           notion_page_id: "83fbbd2006ec436fa76579837e795bab"
-          # Make sure this is one line, otherwise Github doesn't parse it correctly
+          # Make sure this is one line, otherwise GitHub doesn't parse it correctly
           gh_notion_user_map: '{"aSillyName":"3ab2cd1ef-aaaa-bbbb", "someoneElse": "aaaabbbb-cccc-0000"}'
           board_column_prop_name: "Status"
           relation_prop_name: "Project"
@@ -79,13 +79,13 @@ where `eventType` can be any of the following:
 
 ## Limitations
 
-### The Github Notion user map needs to be written in one line
+### The GitHub Notion user map needs to be written in one line
 
-This is a Github limitation and can't be fixed inside this action, unfortunately.
+This is a GitHub limitation and can't be fixed inside this action, unfortunately.
 
 ### Race Conditions when emitting many similar events at once
 
-Github runs all actions in parallel, so if you open an issue and add some labels, then there will be issues with the labels attempting to overwrite each other.
+GitHub runs all actions in parallel, so if you open an issue and add some labels, then there will be issues with the labels attempting to overwrite each other.
 
 Therefore, we don't get the labels and the assignees from the event, but instead fetch them from the issue object and make sure to write all of them at once.
 

@@ -7,7 +7,7 @@ export function config(): Config {
   dotconfig()
   const ghTokenTmp = process.env.GITHUB_API_TOKEN
   if (!ghTokenTmp) {
-    throw new Error('Please add a Github access token to your .env file')
+    throw new Error('Please add a GitHub access token to your .env file')
   }
   const ghToken = ghTokenTmp
   const pageIdTmp = process.env.NOTION_PAGE_ID
@@ -20,8 +20,8 @@ export function config(): Config {
     throw new Error('Please add a notion API key to your .env file')
   }
   const apiKey = apiKeyTmp
-  const labelPropName = process.env.GH_LABEL_PROP_NAME ?? 'Github Labels'
-  const linkPropName = process.env.GH_LINK_PROP_NAME ?? 'Github Link'
+  const labelPropName = process.env.GH_LABEL_PROP_NAME ?? 'GitHub Labels'
+  const linkPropName = process.env.GH_LINK_PROP_NAME ?? 'GitHub Link'
   const assigneePropName = process.env.ASSIGNEE_PROP_NAME ?? 'Assignees'
   const boardColumnPropName = process.env.BOARD_COLUMN_PROP_NAME ?? 'Status'
   const boardColumnDefaultVal =

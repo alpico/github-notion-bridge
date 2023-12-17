@@ -5,6 +5,7 @@ import * as issue_comment from './issue_comment'
 import { Client } from '@notionhq/client'
 import * as github from '@actions/github'
 import fs from 'fs'
+import { config } from './config'
 
 type IssuesAction =
   | 'opened'
@@ -143,7 +144,7 @@ export async function notionPageIdsFromGithubLink(
   const response = await notion.databases.query({
     database_id: databaseId,
     filter: {
-      property: 'Github Link',
+      property: config.linkPropName,
       url: { equals: link }
     }
   })

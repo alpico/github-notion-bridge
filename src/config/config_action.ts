@@ -1,4 +1,4 @@
-//! Loads in data from the Github Action API
+//! Loads in data from the GitHub Action API
 
 import { Config } from '.'
 import * as core from '@actions/core'

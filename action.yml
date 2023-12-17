@@ -1,11 +1,11 @@
-name: 'Github Notion Bridge'
-description: 'Event-based mirroring activity from Github in Notion'
+name: 'GitHub Notion Bridge'
+description: 'Event-based mirroring activity from GitHub in Notion'
 author: 'alpico'
 
 inputs:
     gh_token:
       required: true
-      description: "The token which has access to your github repositories"
+      description: "The token which has access to your GitHub repositories"
 
     notion_api_key:
       required: true
@@ -26,22 +26,22 @@ inputs:
     gh_notion_user_map:
       required: false
       default: "{}"
-      description: "Maps Github usernames to Notion user IDs"
+      description: "Maps GitHub usernames to Notion user IDs"
 
     gh_label_prop_name:
       required: false
-      default: "Github Labels"
-      description: "The property in the database to which the Github labels should be written"
+      default: "GitHub Labels"
+      description: "The property in the database to which the GitHub labels should be written"
 
     gh_link_prop_name:
       required: false
-      default: "Github Link"
-      description: "The property in the database to which the link to the Github issue should be written"
+      default: "GitHub Link"
+      description: "The property in the database to which the link to the GitHub issue should be written"
 
     gh_repo_prop_name:
       required: false
       default: "Repository"
-      description: "The property in the database to which the name of the Github repository should be written"
+      description: "The property in the database to which the name of the GitHub repository should be written"
 
     gh_assignee_prop_name:
       required: false
