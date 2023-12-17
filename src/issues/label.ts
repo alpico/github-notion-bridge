@@ -16,10 +16,10 @@ export async function label(context: Context): Promise<void> {
     config.pageId,
     link
   )
-  issuePageIds.forEach(async issuePageId => {
+  for (const issuePageId of issuePageIds) {
     core.debug(`Updating notion page ${issuePageId}...`)
     await updatePageLabels(notion, issuePageId, labelNames)
-  })
+  }
 }
 
 async function updatePageLabels(
@@ -29,12 +29,12 @@ async function updatePageLabels(
 ): Promise<void> {
   const labels = await getPageLabels(notion, pageId)
   let noLabelsAdded = true
-  labelNames.forEach(label => {
-    if (!labels.find((x: any) => x.name === label)) {
+  for (const labelName of labelNames) {
+    if (!labels.find((x: { name: string }) => x.name === labelName)) {
       noLabelsAdded = false
-      labels.push({ name: label })
+      labels.push({ name: labelName })
     }
-  })
+  }
   if (noLabelsAdded) {
     core.info(`All labels already set for page ${pageId}`)
     return

@@ -17,11 +17,12 @@ export async function unlabel(context: Context): Promise<void> {
     config.pageId,
     link
   )
-  issuePageIds.forEach(async issuePageId => {
+  for (const issuePageId of issuePageIds) {
     core.debug(`Updating notion page ${issuePageId}...`)
-    const labels = await getPageLabels(notion, issuePageId).then(labels =>
-      labels.filter((elem: any) => elem['name'] !== labelName)
+    const labels = await getPageLabels(notion, issuePageId)
+    const filteredLabels = labels.filter(
+      (elem: { name: string }) => elem.name !== labelName
     )
-    await setPageLabels(notion, issuePageId, labels)
-  })
+    await setPageLabels(notion, issuePageId, filteredLabels)
+  }
 }

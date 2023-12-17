@@ -36,7 +36,7 @@ export async function open(context: Context): Promise<void> {
       },
       [config.assigneePropName]: {
         people:
-          issue?.assignees.map((user: any) => {
+          issue?.assignees.map((user: { login: string }) => {
             return { id: config.ghNotionUserMap[user.login] }
           }) ?? {}
       },
@@ -49,7 +49,7 @@ export async function open(context: Context): Promise<void> {
         relation: [{ id: config.relatedPage }]
       }
     },
-    children: markdownToBlocks(issue?.body ?? '') as Array<BlockObjectRequest>
+    children: markdownToBlocks(issue?.body ?? '') as BlockObjectRequest[]
   })
   core.info(`Page created: ${newPage.id}`)
 }

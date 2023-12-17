@@ -19,12 +19,14 @@ export type Config = {
   ghNotionUserMap: Record<string, string>
 }
 
-export let config: Config
+let configTmp: Config
 if (process.argv.find(x => x === '--local') !== undefined) {
-  config = config_local()
+  configTmp = config_local()
 } else {
   core.info('Using action configuration...')
-  config = config_action()
+  configTmp = config_action()
 }
 
-core.info(JSON.stringify(config))
+export const config = configTmp
+
+core.info(JSON.stringify(configTmp))

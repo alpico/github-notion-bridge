@@ -14,8 +14,8 @@ export async function close(context: Context): Promise<void> {
     config.pageId,
     link
   )
-  issuePageIds.forEach(async issuePageId => {
+  for (const issuePageId of issuePageIds) {
     core.debug(`Updating notion page ${issuePageId}...`)
     await moveIssueOnBoard(notion, issuePageId, config.boardColumnDoneVal)
-  })
+  }
 }

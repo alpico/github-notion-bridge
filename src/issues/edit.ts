@@ -16,7 +16,7 @@ export async function edit(context: Context): Promise<void> {
     link
   )
 
-  issuePageIds.forEach(async issuePageId => {
+  for (const issuePageId of issuePageIds) {
     core.debug(`Updating notion page ${issuePageId}...`)
     if (context.payload.changes.title?.from) {
       await updateTitle(
@@ -28,7 +28,7 @@ export async function edit(context: Context): Promise<void> {
     if (context.payload.changes.body?.from) {
       await updateBody(notion, issuePageId, context.payload.issue?.body ?? '')
     }
-  })
+  }
 }
 
 async function updateTitle(
@@ -55,7 +55,7 @@ async function updateBody(
   await deleteChildBlocks(notion, pageId)
   const response = await notion.blocks.children.append({
     block_id: pageId,
-    children: markdownToBlocks(newBody) as Array<BlockObjectRequest>
+    children: markdownToBlocks(newBody) as BlockObjectRequest[]
   })
   core.debug(`updateBody for ${pageId}: ${JSON.stringify(response)}`)
 }

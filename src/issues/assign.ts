@@ -15,10 +15,10 @@ export async function assign(context: Context): Promise<void> {
     link
   )
   const notionUser = config.ghNotionUserMap[context.payload.assignee.login]
-  issuePageIds.forEach(async issuePageId => {
+  for (const issuePageId of issuePageIds) {
     core.debug(`Updating notion page ${issuePageId}...`)
     await updateAssignee(notion, issuePageId, notionUser)
-  })
+  }
 }
 
 async function updateAssignee(

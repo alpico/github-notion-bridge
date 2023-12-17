@@ -20,11 +20,11 @@ export async function create(context: Context): Promise<void> {
   const header = `[@${login}](${author_url}) [commented](${url}): `
   const body = context.payload.comment?.body ?? ''
 
-  issuePageIds.forEach(async issuePageId => {
+  for (const issuePageId of issuePageIds) {
     core.debug(`Updating notion page ${issuePageId}...`)
     await notion.comments.create({
       parent: { page_id: issuePageId },
       rich_text: markdownToRichText(header + body)
     })
-  })
+  }
 }

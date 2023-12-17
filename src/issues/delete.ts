@@ -13,12 +13,12 @@ export async function deletePage(context: Context): Promise<void> {
     config.pageId,
     link
   )
-  issuePageIds.forEach(async issuePageId => {
+  for (const issuePageId of issuePageIds) {
     core.debug(`Updating notion page ${issuePageId}...`)
     const response = await notion.pages.update({
       page_id: issuePageId,
       archived: true
     })
     core.debug(`deletePage for ${issuePageId}: ${JSON.stringify(response)}`)
-  })
+  }
 }

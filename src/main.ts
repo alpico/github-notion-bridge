@@ -42,7 +42,7 @@ export async function run(): Promise<void> {
     }
     if (context.eventName === 'issues') {
       await handleIssuesEvent(context)
-    } else if (context.eventName == 'issue_comment') {
+    } else if (context.eventName === 'issue_comment') {
       await handleIssueCommentEvent(context)
     } else {
       throw new Error(

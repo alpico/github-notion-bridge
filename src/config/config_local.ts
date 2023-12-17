@@ -9,17 +9,17 @@ export function config(): Config {
   if (!ghTokenTmp) {
     throw new Error('Please add a Github access token to your .env file')
   }
-  const ghToken = ghTokenTmp!
+  const ghToken = ghTokenTmp
   const pageIdTmp = process.env.NOTION_PAGE_ID
   if (!pageIdTmp) {
     throw new Error('Please add a pageId to your .env file')
   }
-  const pageId = pageIdTmp!
-  const apiKeyTmp = process.env.NOTION_API_KEY!
+  const pageId = pageIdTmp
+  const apiKeyTmp = process.env.NOTION_API_KEY
   if (!apiKeyTmp) {
     throw new Error('Please add a notion API key to your .env file')
   }
-  const apiKey = apiKeyTmp!
+  const apiKey = apiKeyTmp
   const labelPropName = process.env.GH_LABEL_PROP_NAME ?? 'Github Labels'
   const linkPropName = process.env.GH_LINK_PROP_NAME ?? 'Github Link'
   const assigneePropName = process.env.ASSIGNEE_PROP_NAME ?? 'Assignees'
@@ -35,14 +35,14 @@ export function config(): Config {
       'Please specify a related page (e.g. "GithubRepo") for a cleaner database'
     )
   }
-  const relatedPage = relatedPageTmp!!
+  const relatedPage = relatedPageTmp
   const relationPropNameTmp = process.env.RELATION_PROP_NAME
   if (!relationPropNameTmp) {
     throw new Error(
       'Please specify the property name on which the relation is defined'
     )
   }
-  const relationPropName = relationPropNameTmp!!
+  const relationPropName = relationPropNameTmp
   const ghNotionUserMap = JSON.parse(process.env.GITHUB_NOTION_USER_MAP ?? '')
   const issueIcon =
     process.env.NOTION_ISSUE_ICON ??

@@ -16,11 +16,11 @@ export async function unassign(context: Context): Promise<void> {
   const ghUser = context.payload.assignee.login
   core.info(`Unassigning user ${ghUser} from issue ${link}...`)
   const notionUser = config.ghNotionUserMap[ghUser]
-  issuePageIds.forEach(async issuePageId => {
+  for (const issuePageId of issuePageIds) {
     const assignee = await getAssignee(notion, issuePageId)
     if (assignee['id'] !== notionUser) {
       return
     }
     await setAssignees(notion, issuePageId, [])
-  })
+  }
 }
