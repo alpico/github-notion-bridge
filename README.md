@@ -14,7 +14,7 @@ Another pain point is that specific Notion issue board formats are required,
 tools going as far as to offer templates, so their tool works.
 The only assumption we make for your issue board is
 that it has a property which defines the columns,
-and one a relation to repo specific projects.
+and one a relation to repository specific projects.
 the rest can be configured but also offers sane defaults.
 
 ## Setup
@@ -55,7 +55,7 @@ jobs:
           gh_token: ${{ secrets.GH_TOKEN }}
           notion_page_id: "83fbbd2006ec436fa76579837e795bab"
           # Make sure this is one line, otherwise GitHub doesn't parse it correctly
-          gh_notion_user_map: '{"aSillyName":"3ab2cd1ef-aaaa-bbbb", "someoneElse": "aaaabbbb-cccc-0000"}'
+          gh_notion_user_map: '{"aSillyName":"3ab2c", "someoneElse": "aabbcc"}'
           board_column_prop_name: "Status"
           relation_prop_name: "Project"
           related_page: "1ab345890abcdef"
