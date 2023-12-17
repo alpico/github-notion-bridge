@@ -47058,7 +47058,7 @@ function config() {
     const boardColumnPropName = process.env.BOARD_COLUMN_PROP_NAME ?? 'Status';
     const boardColumnDefaultVal = process.env.BOARD_COLUMN_DEFAULT_VAL ?? 'Backlog';
     const boardColumnDoneVal = process.env.BOARD_COLUMN_DONE_VAL ?? 'Done';
-    const boardColumnReopenedVal = process.env.BOARD_COLUMN_REOPENED_VAL ?? 'In Progress';
+    const boardColumnReopenedVal = process.env.BOARD_COLUMN_REOPENED_VAL ?? 'In progress';
     const relatedPageTmp = process.env.RELATED_PAGE;
     if (!relatedPageTmp) {
         throw new Error('Please specify a related page (e.g. "GithubRepo") for a cleaner database');

@@ -65,7 +65,7 @@ inputs:
 
     board_column_reopened_val:
       required: false
-      default: "In Progress"
+      default: "In progress"
       description: "The column of the database in which reopened issues should be placed"
 
     notion_issue_icon_url:
