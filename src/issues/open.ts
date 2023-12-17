@@ -5,7 +5,7 @@ import { markdownToBlocks } from "@tryfabric/martian";
 import { githubLinkFromIssue } from '../main'
 import { config } from "../config";
 import * as core from "@actions/core";
-import { getPageLabels, updateDBLabels } from ".";
+import { updateDBLabels } from ".";
 
 export async function open(context: Context): Promise<void> {
     const link = githubLinkFromIssue(context);
