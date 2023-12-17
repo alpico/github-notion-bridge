@@ -46976,7 +46976,7 @@ function wrappy (fn, cb) {
 
 "use strict";
 
-//! Loads in data from the Github Action API
+//! Loads in data from the GitHub Action API
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     var desc = Object.getOwnPropertyDescriptor(m, k);
@@ -47039,7 +47039,7 @@ function config() {
     (0, dotenv_1.config)();
     const ghTokenTmp = process.env.GITHUB_API_TOKEN;
     if (!ghTokenTmp) {
-        throw new Error('Please add a Github access token to your .env file');
+        throw new Error('Please add a GitHub access token to your .env file');
     }
     const ghToken = ghTokenTmp;
     const pageIdTmp = process.env.NOTION_PAGE_ID;
@@ -47052,8 +47052,8 @@ function config() {
         throw new Error('Please add a notion API key to your .env file');
     }
     const apiKey = apiKeyTmp;
-    const labelPropName = process.env.GH_LABEL_PROP_NAME ?? 'Github Labels';
-    const linkPropName = process.env.GH_LINK_PROP_NAME ?? 'Github Link';
+    const labelPropName = process.env.GH_LABEL_PROP_NAME ?? 'GitHub Labels';
+    const linkPropName = process.env.GH_LINK_PROP_NAME ?? 'GitHub Link';
     const assigneePropName = process.env.ASSIGNEE_PROP_NAME ?? 'Assignees';
     const boardColumnPropName = process.env.BOARD_COLUMN_PROP_NAME ?? 'Status';
     const boardColumnDefaultVal = process.env.BOARD_COLUMN_DEFAULT_VAL ?? 'Backlog';
@@ -47956,6 +47956,7 @@ const issues = __importStar(__nccwpck_require__(6010));
 const issue_comment = __importStar(__nccwpck_require__(3683));
 const github = __importStar(__nccwpck_require__(5438));
 const fs_1 = __importDefault(__nccwpck_require__(7147));
+const config_1 = __nccwpck_require__(2284);
 /**
  * The main function for the action.
  * @returns {Promise<void>} Resolves when the action is complete.
@@ -48064,7 +48065,7 @@ async function notionPageIdsFromGithubLink(notion, databaseId, link) {
     const response = await notion.databases.query({
         database_id: databaseId,
         filter: {
-            property: 'Github Link',
+            property: config_1.config.linkPropName,
             url: { equals: link }
         }
     });
