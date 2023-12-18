@@ -1,8 +1,9 @@
 name: 'GitHub Notion Bridge'
 description: 'Event-based mirroring activity from GitHub in Notion'
 author: 'alpico'
-color: 'purple'
-icon: 'upload-cloud'
+branding:
+    color: 'purple'
+    icon: 'upload-cloud'
 
 inputs:
     gh_token:
